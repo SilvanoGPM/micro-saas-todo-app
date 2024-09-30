@@ -1,0 +1,21 @@
+{
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always"
+  },
+
+  "jestrunner.codeLensSelector": "**/*{test,spec}.{js,jsx,ts,tsx}",
+  "jestrunner.jestCommand": "npm run test --",
+  "jestrunner.configPath": "jest.config.js",
+  "jestrunner.debugOptions": {
+    "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/react-scripts",
+    "runtimeArgs": [
+      "test",
+      "${fileBasename}",
+      "--runInBand",
+      "--no-cache",
+      "--watchAll=false",
+      "--color"
+    ]
+  }
+}
