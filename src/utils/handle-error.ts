@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 
-import { ActionError } from './handle-action';
+import { ActionError } from '$libs/errors/action-error';
 
 export const errorsToWarning = ['Unauthorized', 'Not Found'];
 

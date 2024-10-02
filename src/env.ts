@@ -9,6 +9,8 @@ export const env = createEnv({
   shared: {
     NEXT_PUBLIC_APP_URL: z.string().optional(),
 
+    NEXT_PUBLIC_USE_FAKES: z.string().optional(),
+
     NODE_ENV: z.enum(['test', 'development', 'production']),
   },
 
@@ -24,6 +26,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_MODE: process.env.NEXT_PUBLIC_MODE,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_USE_FAKES: process.env.NEXT_PUBLIC_USE_FAKES,
 
     EMAIL_USERNAME: process.env.EMAIL_USERNAME,
     EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,

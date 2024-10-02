@@ -8,5 +8,12 @@ export function redirectToLogin(
   type: keyof typeof flashMessageTypes,
   message: string,
 ) {
-  return redirect(`${ROUTES.auth.login}?${getFlashMessage(type, message)}`);
+  return redirect(getRedirectToLoginFlashMessage(type, message));
+}
+
+export function getRedirectToLoginFlashMessage(
+  type: keyof typeof flashMessageTypes,
+  message: string,
+) {
+  return `${ROUTES.auth.login}?${getFlashMessage(type, message)}`;
 }

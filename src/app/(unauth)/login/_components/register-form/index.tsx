@@ -39,7 +39,7 @@ export function RegisterForm({ backToLogin }: RegisterFormProps) {
 
       backToLogin();
     } catch (error) {
-      handleError(error);
+      handleError(error, 'Não foi possível criar usuário, tente novamente.');
     }
   });
 
@@ -70,7 +70,7 @@ export function RegisterForm({ backToLogin }: RegisterFormProps) {
                 name="email"
                 label="E-mail"
                 labelIcon={MailIcon}
-                placeholder="example@mail.coms"
+                placeholder="example@mail.com"
               />
 
               <InputPasswordForm

@@ -33,7 +33,7 @@ export function ChangePasswordForm({ token }: ChangePasswordFormProps) {
         newPassword: data.password,
       });
     } catch (error) {
-      handleError(error);
+      handleError(error, 'Não foi possível alterar senha, tente novamente.');
     }
   });
 

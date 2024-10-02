@@ -1,3 +1,12 @@
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import bcrypt from 'bcryptjs';
+import NextAuth, { CredentialsSignin, NextAuthConfig } from 'next-auth';
+import credentials from 'next-auth/providers/credentials';
+
+import { loginSchema } from '$app/(unauth)/login/_components/login-form/schema';
+
+import { prisma } from './prisma';
+
 export const ROUTES = {
   auth: {
     login: '/login',
@@ -11,15 +20,6 @@ export const ROUTES = {
     },
   },
 };
-
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import bcrypt from 'bcryptjs';
-import NextAuth, { CredentialsSignin, NextAuthConfig } from 'next-auth';
-import credentials from 'next-auth/providers/credentials';
-
-import { loginSchema } from '$app/(unauth)/login/_components/login-form/schema';
-
-import { prisma } from './prisma';
 
 export class EmailNotVerifiedError extends CredentialsSignin {
   code = 'email_not_verified';

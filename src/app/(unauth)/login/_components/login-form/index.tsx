@@ -79,7 +79,7 @@ export function LoginForm({
                 name="email"
                 label="E-mail"
                 labelIcon={MailIcon}
-                placeholder="example@mail.coms"
+                placeholder="example@mail.com"
               />
 
               <div>

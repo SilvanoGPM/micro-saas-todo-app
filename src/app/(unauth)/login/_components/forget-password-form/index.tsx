@@ -37,7 +37,7 @@ export function ForgotPasswordForm({ backToLogin }: ForgotPasswordFormProps) {
 
       backToLogin();
     } catch (error) {
-      handleError(error);
+      handleError(error, 'Não foi enviar e-mail, por favor tente novamente.');
     }
   });
 
@@ -59,7 +59,7 @@ export function ForgotPasswordForm({ backToLogin }: ForgotPasswordFormProps) {
               name="email"
               label="E-mail"
               labelIcon={MailIcon}
-              placeholder="example@mail.coms"
+              placeholder="example@mail.com"
             />
 
             <Button
