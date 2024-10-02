@@ -18,8 +18,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Shadcn Mastering',
-  description: 'Componentes do shadcn adaptados para os meus projetos',
+  title: {
+    template: '%s | TodoSaaS',
+    default: 'TodoSaaS',
+  },
+
+  description: 'Salve suas tarefas do dia a dia com facilidade!',
 
   manifest: '/manifest.json',
 

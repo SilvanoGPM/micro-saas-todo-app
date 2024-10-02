@@ -1,7 +1,7 @@
 {
-  "name": "Shadcn Mastering",
-  "short_name": "Shadcn Mastering",
-  "description": "Componentes do shadcn adaptados para os meus projetos",
+  "name": "TodoSaaS",
+  "short_name": "TodoSaaS",
+  "description": "Salve suas tarefas do dia a dia com facilidade!",
   "theme_color": "#FFFFFF",
   "background_color": "#FFFFFF",
   "start_url": "/",

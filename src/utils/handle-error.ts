@@ -1,11 +1,14 @@
 import { toast } from 'sonner';
 
+import { ActionError } from './handle-action';
+
 export const errorsToWarning = ['Unauthorized', 'Not Found'];
 
 export function handleError(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error: any,
   defaultMessage = 'Tente novamente, em alguns minutos, caso o erro persista, entre em contato com o suporte.',
+  methodOverride: 'error' | 'warning' = 'error',
 ) {
   let description =
     typeof error === 'string'
@@ -20,10 +23,15 @@ export function handleError(
   const is422Error = error?.response?.status === 422;
   const is500Error = error?.response?.status === 500;
 
+  const actionErrorStatus = error instanceof ActionError && error?.status;
+
   const method =
-    errorsToWarning.includes(error?.response?.data?.error) || is422Error
+    methodOverride ||
+    (errorsToWarning.includes(error?.response?.data?.error) ||
+    is422Error ||
+    actionErrorStatus === 'warning'
       ? 'warning'
-      : 'error';
+      : 'error');
 
   if (is422Error) {
     description = 'Campos inválidos';
@@ -33,7 +41,7 @@ export function handleError(
     description = 'Problemas no servidor';
   }
 
-  toast[method]('Aconteceu um erro', {
+  toast[method](`Aconteceu um ${method === 'error' ? 'erro' : 'problema'}`, {
     description,
   });
 }

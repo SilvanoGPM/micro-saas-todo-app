@@ -36,7 +36,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "src/app/(unauth)/login/_components/login-form/index.txs"  ],
   "exclude": [
     "node_modules"
   ]

@@ -1,0 +1,33 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+type WithoutError<T> = Omit<T, 'error'>;
+
+export class ActionError extends Error {
+  status: string;
+
+  constructor(message: string, status: string) {
+    super(message);
+    this.status = status;
+    this.name = 'ActionError';
+  }
+}
+
+export async function handleAction<T extends object>(
+  fn: (...args: any[]) => Promise<T | void>,
+  ...args: Parameters<typeof fn>
+): Promise<WithoutError<T>> {
+  const response = await fn(...args);
+
+  if (!response) {
+    return {} as WithoutError<T>;
+  }
+
+  if ('error' in response) {
+    const status = (response as any)?.status || 'error';
+
+    throw new ActionError((response as any).error, status);
+  }
+
+  const { error: _, ...rest } = response as T & { error?: string };
+  return rest as WithoutError<T>;
+}
