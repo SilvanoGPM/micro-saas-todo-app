@@ -6,7 +6,7 @@ export async function verifyIfTokenIsValid(token?: string) {
     return redirectToLogin('warning', 'Código inválido');
   }
 
-  const verificationToken = await prisma.verificationRequest.findUnique({
+  const verificationToken = await prisma.verificationToken.findUnique({
     where: { token },
     select: { expires: true },
   });

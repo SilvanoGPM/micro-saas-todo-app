@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-import { ROUTES } from '$libs/auth';
+import { ROUTES } from '$libs/auth/routes';
 
 import { flashMessageTypes, getFlashMessage } from './get-flash-message';
 

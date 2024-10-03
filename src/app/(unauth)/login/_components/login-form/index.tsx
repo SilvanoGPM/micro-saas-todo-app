@@ -2,10 +2,11 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { MailIcon } from 'lucide-react';
+import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { useState } from 'react';
 
 import { InputForm } from '$components/form/input-form';
 import { InputPasswordForm } from '$components/form/input-password-form';
@@ -15,7 +16,7 @@ import { Logo } from '$components/logo';
 import { Button } from '$components/ui/button';
 import { Form } from '$components/ui/form';
 import { Separator } from '$components/ui/separator';
-import { ROUTES } from '$libs/auth';
+import { ROUTES } from '$libs/auth/routes';
 import { handleAction } from '$utils/handle-action';
 import { handleError } from '$utils/handle-error';
 
@@ -33,8 +34,7 @@ export function LoginForm({
 }: LoginFormProps) {
   const router = useRouter();
 
-  const [isCredentialsAuthLoading, setIsCredentialsAuthLoading] =
-    useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(false);
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
@@ -44,9 +44,21 @@ export function LoginForm({
     },
   });
 
+  function handleOAuthLogin(provider: 'google' | 'github') {
+    return async () => {
+      setIsAuthLoading(true);
+
+      try {
+        await signIn(provider);
+      } catch {
+        setIsAuthLoading(false);
+      }
+    };
+  }
+
   const handleCredentialsLogin = form.handleSubmit(async (data) => {
     try {
-      setIsCredentialsAuthLoading(true);
+      setIsAuthLoading(true);
 
       await handleAction(loginWithCredentials, data);
 
@@ -57,11 +69,11 @@ export function LoginForm({
       });
     } catch (error) {
       handleError(error);
-      setIsCredentialsAuthLoading(false);
+      setIsAuthLoading(false);
     }
   });
 
-  const isLoading = form.formState.isSubmitting || isCredentialsAuthLoading;
+  const isLoading = form.formState.isSubmitting || isAuthLoading;
 
   return (
     <div className="max-w-[400px] w-full flex flex-col gap-8">
@@ -130,6 +142,7 @@ export function LoginForm({
           </div>
 
           <Button
+            onClick={handleOAuthLogin('google')}
             className="w-full mb-4"
             variant="outline"
             isLoading={isLoading}
@@ -138,7 +151,12 @@ export function LoginForm({
             Entrar com Google
           </Button>
 
-          <Button className="w-full " variant="outline" isLoading={isLoading}>
+          <Button
+            className="w-full "
+            variant="outline"
+            isLoading={isLoading}
+            onClick={handleOAuthLogin('github')}
+          >
             <GithubIcon className="size-4 mr-2" />
             Entrar com Github
           </Button>

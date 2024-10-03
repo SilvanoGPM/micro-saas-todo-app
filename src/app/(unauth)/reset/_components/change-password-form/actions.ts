@@ -14,7 +14,7 @@ const schema = z.object({
 export async function changePassword(data: z.infer<typeof schema>) {
   const { token, newPassword } = await schema.parseAsync(data);
 
-  const verificationToken = await prisma.verificationRequest.findUnique({
+  const verificationToken = await prisma.verificationToken.findUnique({
     where: { token },
     select: { identifier: true },
   });
@@ -26,7 +26,7 @@ export async function changePassword(data: z.infer<typeof schema>) {
   const hashedPassword = await hash(newPassword, 10);
 
   await prisma.$transaction(async (tx) => {
-    await tx.verificationRequest.deleteMany({
+    await tx.verificationToken.deleteMany({
       where: { identifier: verificationToken.identifier },
     });
 

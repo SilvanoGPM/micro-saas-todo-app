@@ -1,34 +1,18 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import bcrypt from 'bcryptjs';
-import NextAuth, { CredentialsSignin, NextAuthConfig } from 'next-auth';
+import NextAuth, { NextAuthConfig } from 'next-auth';
 import credentials from 'next-auth/providers/credentials';
+import github from 'next-auth/providers/github';
+import google from 'next-auth/providers/google';
 
 import { loginSchema } from '$app/(unauth)/login/_components/login-form/schema';
 
-import { prisma } from './prisma';
+import { prisma } from '../prisma';
 
-export const ROUTES = {
-  auth: {
-    login: '/login',
-    verify: '/verify',
-    reset: '/reset',
-  },
-
-  private: {
-    home: {
-      path: '/',
-    },
-  },
-};
-
-export class EmailNotVerifiedError extends CredentialsSignin {
-  code = 'email_not_verified';
-
-  constructor(message: string) {
-    super(message);
-    this.code = message;
-  }
-}
+import { EmailNotFoundError } from './errors/email-not-found';
+import { EmailNotVerifiedError } from './errors/email-not-verified';
+import { ROUTES } from './routes';
+import { IncorrectProviderError } from './errors/incorrect-provider';
 
 export const sharedConfig = {
   providers: [
@@ -51,9 +35,26 @@ export const sharedConfig = {
 
         const user = await prisma.user.findUnique({
           where: { email },
+          include: {
+            _count: {
+              select: {
+                accounts: true,
+              },
+            },
+          },
         });
 
-        if (!user || !user.password) {
+        if (!user) {
+          throw new EmailNotFoundError('E-mail não encontrado');
+        }
+
+        if (user._count.accounts > 0) {
+          throw new IncorrectProviderError(
+            'Sua conta não foi registrada com um e-mail. Tente outro método de login',
+          );
+        }
+
+        if (!user.password) {
           return null;
         }
 
@@ -67,10 +68,15 @@ export const sharedConfig = {
           return null;
         }
 
+        const { _count, ...userWithoutCount } = user;
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return user as any;
+        return userWithoutCount as any;
       },
     }),
+
+    github,
+    google,
   ],
 } as NextAuthConfig;
 

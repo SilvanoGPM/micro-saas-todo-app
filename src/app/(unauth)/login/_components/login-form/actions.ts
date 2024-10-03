@@ -2,7 +2,10 @@
 
 import { CredentialsSignin } from 'next-auth';
 
-import { EmailNotVerifiedError, signIn } from '$libs/auth';
+import { signIn } from '$libs/auth';
+import { EmailNotFoundError } from '$libs/auth/errors/email-not-found';
+import { EmailNotVerifiedError } from '$libs/auth/errors/email-not-verified';
+import { IncorrectProviderError } from '$libs/auth/errors/incorrect-provider';
 
 import { loginSchema, LoginSchema } from './schema';
 
@@ -19,7 +22,11 @@ export async function loginWithCredentials(data: LoginSchema) {
       redirect: false,
     });
   } catch (error) {
-    if (error instanceof EmailNotVerifiedError) {
+    if (
+      error instanceof EmailNotVerifiedError ||
+      error instanceof EmailNotFoundError ||
+      error instanceof IncorrectProviderError
+    ) {
       return { error: error.code, status: 'warning' };
     }
 

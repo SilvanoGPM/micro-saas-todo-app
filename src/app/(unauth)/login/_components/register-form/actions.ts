@@ -38,7 +38,7 @@ export async function registerWithCredentials(data: RegisterSchema) {
       },
     });
 
-    const verificationRequest = await tx.verificationRequest.create({
+    const verificationToken = await tx.verificationToken.create({
       data: {
         identifier: data.email,
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24 hours
@@ -53,7 +53,7 @@ export async function registerWithCredentials(data: RegisterSchema) {
         data.name,
       )}, Acesse o link para ativar sua conta <a href="${
         env.NEXT_PUBLIC_APP_URL
-      }/verify?token=${verificationRequest.token}">clicando aqui</a>`,
+      }/verify?token=${verificationToken.token}">clicando aqui</a>`,
     });
   });
 }

@@ -8,7 +8,7 @@ export function handleError(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error: any,
   defaultMessage = 'Tente novamente, em alguns minutos, caso o erro persista, entre em contato com o suporte.',
-  methodOverride: 'error' | 'warning' = 'error',
+  methodOverride?: 'error' | 'warning',
 ) {
   let description =
     typeof error === 'string'

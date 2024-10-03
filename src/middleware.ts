@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 
-import { ROUTES, sharedConfig } from '$libs/auth';
+import { sharedConfig } from '$libs/auth';
+import { ROUTES } from '$libs/auth/routes';
 
 const { auth } = NextAuth(sharedConfig);
 

@@ -8,7 +8,7 @@ export async function verifyToken(token?: string) {
     return redirectToLogin('warning', 'Código inválido');
   }
 
-  const verificationToken = await prisma.verificationRequest.findUnique({
+  const verificationToken = await prisma.verificationToken.findUnique({
     where: { token },
     select: { identifier: true, expires: true },
   });
@@ -22,7 +22,7 @@ export async function verifyToken(token?: string) {
   }
 
   await prisma.$transaction(async (tx) => {
-    await tx.verificationRequest.deleteMany({
+    await tx.verificationToken.deleteMany({
       where: { identifier: verificationToken.identifier },
     });
 
