@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { MailIcon } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { parseAsString, useQueryState } from 'nuqs';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -34,6 +35,11 @@ export function LoginForm({
 }: LoginFormProps) {
   const router = useRouter();
 
+  const [redirectTo] = useQueryState(
+    'redirectTo',
+    parseAsString.withDefault(ROUTES.private.home.path),
+  );
+
   const [isAuthLoading, setIsAuthLoading] = useState(false);
 
   const form = useForm<LoginSchema>({
@@ -62,7 +68,7 @@ export function LoginForm({
 
       await handleAction(loginWithCredentials, data);
 
-      router.push(ROUTES.private.home.path);
+      router.push(redirectTo);
 
       toast.success('Sucesso', {
         description: 'Login realizado com sucesso',
@@ -84,7 +90,7 @@ export function LoginForm({
 
       <div>
         <Form {...form}>
-          <form onSubmit={handleCredentialsLogin} className="space-y-7">
+          <form onSubmit={handleCredentialsLogin} className="space-y-4">
             <div className="space-y-4">
               <InputForm
                 form={form}
@@ -98,18 +104,22 @@ export function LoginForm({
                 <InputPasswordForm
                   form={form}
                   name="password"
-                  label="Senha"
+                  label={
+                    <div className="w-full flex items-center justify-between">
+                      <span>Senha</span>
+
+                      <Button
+                        onClick={goToForgetPassword}
+                        type="button"
+                        variant="link"
+                        className="!p-0 h-auto"
+                      >
+                        Esqueceu sua senha?
+                      </Button>
+                    </div>
+                  }
                   placeholder="********"
                 />
-
-                <Button
-                  onClick={goToForgetPassword}
-                  type="button"
-                  variant="link"
-                  className="w-full justify-end p-0 mt-2"
-                >
-                  Esqueceu sua senha?
-                </Button>
               </div>
             </div>
 
@@ -124,16 +134,14 @@ export function LoginForm({
           </form>
         </Form>
 
-        <Button
-          onClick={goToRegister}
-          variant="link"
-          className="w-full justify-end p-0"
-        >
-          Não possui uma conta?
-        </Button>
+        <div className="w-full text-end">
+          <Button onClick={goToRegister} variant="link" className="p-0">
+            Não possui uma conta?
+          </Button>
+        </div>
 
         <div className="flex flex-col w-full items-center">
-          <div className="my-8 flex gap-2 items-center w-full">
+          <div className="my-6 flex gap-2 items-center w-full">
             <Separator className="flex-1" />
             <p>
               <span className="font-bold text-primary">Entrar</span> com outros

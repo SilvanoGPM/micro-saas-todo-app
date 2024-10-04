@@ -99,13 +99,11 @@ export function RegisterForm({ backToLogin }: RegisterFormProps) {
           </form>
         </Form>
 
-        <Button
-          onClick={backToLogin}
-          variant="link"
-          className="w-full justify-end p-0"
-        >
-          Já possui uma conta?
-        </Button>
+        <div className="w-full text-end">
+          <Button onClick={backToLogin} variant="link" className="p-0">
+            Já possui uma conta?
+          </Button>
+        </div>
       </div>
     </div>
   );

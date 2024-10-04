@@ -26,8 +26,14 @@ export default auth((req) => {
     return;
   }
 
-  if (!isLoggedIn && !isAuthRoute) {
-    return Response.redirect(new URL(ROUTES.auth.login, req.nextUrl));
+  const isPublicRoute = ROUTES.public.includes(req.nextUrl.pathname);
+
+  if (!isLoggedIn && !isAuthRoute && !isPublicRoute) {
+    const loginUrl = new URL(ROUTES.auth.login, req.nextUrl);
+
+    loginUrl.searchParams.set('redirectTo', encodeURI(req.nextUrl.pathname));
+
+    return Response.redirect(loginUrl);
   }
 
   return;

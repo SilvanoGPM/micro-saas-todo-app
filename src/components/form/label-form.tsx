@@ -21,7 +21,8 @@ export function LabelForm({
   return (
     <FormLabel className={cn('flex items-center space-x-1', className)}>
       {Icon && <Icon className="size-4" />}
-      <span>
+
+      <span className="flex-1">
         {children} {required && <span className="text-red-500">*</span>}
       </span>
     </FormLabel>

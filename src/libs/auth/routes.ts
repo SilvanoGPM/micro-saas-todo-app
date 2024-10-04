@@ -5,9 +5,15 @@ export const ROUTES = {
     reset: '/reset',
   },
 
+  public: ['/'],
+
   private: {
     home: {
-      path: '/',
+      path: '/tarefas',
+    },
+
+    settings: {
+      path: '/configuracoes',
     },
   },
 };

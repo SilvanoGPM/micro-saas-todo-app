@@ -1,6 +1,6 @@
 import { Metadata, Viewport } from 'next';
 import dynamic from 'next/dynamic';
-import { ReactNode } from 'react';
+import { PropsWithChildren } from 'react';
 
 import { defaultFont } from '$styles/font';
 import '$styles/globals.css';
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body
