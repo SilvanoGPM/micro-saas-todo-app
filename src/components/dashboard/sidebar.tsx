@@ -31,9 +31,11 @@ export function DefaultSidebar({
 }: DefaultSidebarProps) {
   return (
     <>
+      <div className="lg:w-full lg:max-w-[300px]" />
+
       <aside
         className={cn(
-          'h-full hidden lg:flex flex-col lg:w-full lg:max-w-[300px] lg:border-r',
+          'h-full hidden lg:flex flex-col lg:w-full lg:max-w-[300px] lg:fixed left-0 top-0 lg:border-r',
           className,
         )}
       >

@@ -5,7 +5,7 @@ import { format } from '$libs/date-fns';
 import { cn } from '$utils/cn';
 
 import { Button } from './button';
-import { Calendar } from './calendar';
+import { Calendar, CalendarProps } from './calendar';
 import { FormControl } from './form';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
 
@@ -15,6 +15,8 @@ export interface InputDatePickerProps {
   disabled?: boolean;
   onChange?: (date?: Date) => void;
   value?: Date;
+
+  calendarProps?: Omit<CalendarProps, 'mode' | 'selected' | 'onSelect'>;
 }
 
 export function InputDatePicker({
@@ -23,6 +25,7 @@ export function InputDatePicker({
   className,
   onChange,
   value,
+  calendarProps,
 }: InputDatePickerProps) {
   const [date, setDate] = useState<Date | undefined>(value);
 
@@ -66,14 +69,15 @@ export function InputDatePicker({
 
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
-          mode="single"
           fromYear={1900}
           toYear={2100}
           removeLabel
           captionLayout="dropdown-buttons"
+          initialFocus
+          {...calendarProps}
+          mode="single"
           selected={date}
           onSelect={handleSelect}
-          initialFocus
         />
       </PopoverContent>
     </Popover>

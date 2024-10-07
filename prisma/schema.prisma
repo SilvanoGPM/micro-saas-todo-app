@@ -46,6 +46,7 @@ model User {
   password      String?
   accounts      Account[]
   sessions      Session[]
+  Todo          Todo[]
 
   @@map("users")
 }
@@ -57,4 +58,20 @@ model VerificationToken {
 
   @@unique([token])
   @@map("verification_tokens")
+}
+
+model Todo {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+
+  completedAt DateTime? @map("completed_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  @@map("todos")
 }

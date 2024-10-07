@@ -1,3 +1,5 @@
+import { formatDate } from '$libs/date-fns';
+
 /**
  * Pluraliza uma palavra com base no número fornecido.
  *
@@ -88,4 +90,8 @@ export function formatPhoneNumber(phone: string | number): string {
 
 export function formatToISOString(date: string | Date) {
   return new Date(date).toISOString();
+}
+
+export function formatToNumericDate(date: string | Date) {
+  return formatDate(date, 'dd/MM/yyyy');
 }

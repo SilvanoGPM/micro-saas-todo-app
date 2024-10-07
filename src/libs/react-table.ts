@@ -1,7 +1,9 @@
+export const SORT_SEPARATOR = ':';
+
 export const defaultPagination = {
   page: 1,
   size: 10,
-  sort: '',
+  sort: `updatedAt${SORT_SEPARATOR}desc`,
 };
 
 import { Column, type Table } from '@tanstack/react-table';

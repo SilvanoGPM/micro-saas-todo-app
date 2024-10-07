@@ -45,3 +45,12 @@ export function handleError(
     description,
   });
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function errorToJson(error: Error): Record<string, any> {
+  return {
+    message: error.message,
+    name: error.name,
+    stack: error.stack,
+  };
+}

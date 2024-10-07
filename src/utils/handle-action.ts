@@ -14,7 +14,7 @@ export async function handleAction<T extends object>(
     return {} as WithoutError<T>;
   }
 
-  if ('error' in response) {
+  if ('error' in response && (response as any)?.error) {
     const status = (response as any)?.status || 'error';
 
     throw new ActionError((response as any).error, status);

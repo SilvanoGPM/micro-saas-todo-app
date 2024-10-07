@@ -11,14 +11,15 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { DownloadIcon, RotateCwIcon, SearchIcon } from 'lucide-react';
 import {
-  DownloadIcon,
-  RefreshCcwDotIcon,
-  RefreshCwIcon,
-  RotateCwIcon,
-  SearchIcon,
-} from 'lucide-react';
-import { ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { Button } from '$components/ui/button';
 import { Input } from '$components/ui/input';
@@ -73,7 +74,7 @@ export function DataTable<TData extends object, TValue>({
   tableQueryParamsKeys,
   onRefresh,
 }: DataTableProps<TData, TValue>) {
-  const { page, size, sort, setSearch, setPage, setSort } =
+  const { page, size, search, sort, setSearch, setPage, setSort } =
     useTableQueryParams(tableQueryParamsKeys);
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -119,7 +120,7 @@ export function DataTable<TData extends object, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    pageCount,
+    rowCount: total,
     manualPagination: true,
     manualSorting: true,
     state: {
@@ -143,6 +144,13 @@ export function DataTable<TData extends object, TValue>({
     },
     [setSearch, setPage],
   );
+
+  // Limpa o valor do input quando o valor de search é vazio.
+  useEffect(() => {
+    if (!search && inputRef.current) {
+      inputRef.current.value = '';
+    }
+  }, [search]);
 
   return (
     <div className="w-full">
