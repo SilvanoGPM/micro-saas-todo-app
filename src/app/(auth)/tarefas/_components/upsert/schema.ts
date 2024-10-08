@@ -13,3 +13,10 @@ export const upsertTodoSchema = z.object({
 });
 
 export type UpsertTodoSchema = z.infer<typeof upsertTodoSchema>;
+
+export const defaultUpsertTodoValues: UpsertTodoSchema = {
+  id: null,
+  title: '',
+  description: '',
+  completedAt: null,
+};

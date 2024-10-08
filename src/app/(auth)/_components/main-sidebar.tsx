@@ -22,6 +22,7 @@ import { ToggleThemeButton } from '$components/toggle-theme';
 import { ScrollArea } from '$components/ui/scroll-area';
 import { ROUTES } from '$libs/auth/routes';
 import { useUIStore } from '$stores/ui';
+import { isPathActive } from '$utils/is-path-active';
 
 import { UserInfoDropdown } from './user-info-dropdown';
 
@@ -46,10 +47,6 @@ const links = [
 export function MainSidebar({ user }: MainSidebarProps) {
   const pathname = usePathname();
 
-  function isPathActive(path: string) {
-    return pathname === path;
-  }
-
   const { isDefaultSidebarOpen, setIsDefaultSidebarOpen } = useUIStore(
     useShallow((state) => ({
       isDefaultSidebarOpen: state.isDefaultSidebarOpen,
@@ -65,9 +62,12 @@ export function MainSidebar({ user }: MainSidebarProps) {
         <DefaultSidebarMobileButton onOpenChange={setIsDefaultSidebarOpen} />
       </DefaultSidebarMobileHeader>
 
+      <div className="lg:w-full lg:max-w-[300px]" />
+
       <DefaultSidebar
         isOpen={isDefaultSidebarOpen}
         onOpenChange={setIsDefaultSidebarOpen}
+        className="h-full hidden lg:flex flex-col lg:w-full lg:max-w-[300px] lg:fixed left-0 top-0 lg:border-r"
       >
         <DefaultSidebarHeader>
           <Link href={ROUTES.private.home.path}>
@@ -84,7 +84,11 @@ export function MainSidebar({ user }: MainSidebarProps) {
                   key={link.href}
                   href={link.href}
                   icon={<link.icon className="size-4" />}
-                  isActive={isPathActive(link.href)}
+                  isActive={isPathActive({
+                    activePath: pathname,
+                    path: link.href,
+                    mode: 'startsWith',
+                  })}
                 >
                   {link.label}
                 </DefaultSidebarNavItem>

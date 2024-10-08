@@ -28,7 +28,6 @@ export function InputForm<F extends FieldValues>({
 }: InputFormProps<F>) {
   return (
     <FormField
-      disabled={props.disabled}
       control={form.control}
       name={name}
       render={({ field }) => (

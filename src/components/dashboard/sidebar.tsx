@@ -14,6 +14,7 @@ export interface DefaultSidebarSharedProps {
 export interface DefaultSidebarProps extends DefaultSidebarSharedProps {
   isOpen?: boolean;
   onOpenChange?: (isOpen: boolean) => void;
+  mobileSheet?: boolean;
 }
 
 export interface DefaultSidebarNavItemProps extends DefaultSidebarSharedProps {
@@ -28,23 +29,21 @@ export function DefaultSidebar({
   children,
   isOpen,
   onOpenChange,
+  mobileSheet = false,
 }: DefaultSidebarProps) {
   return (
     <>
-      <div className="lg:w-full lg:max-w-[300px]" />
+      <aside className={cn('flex flex-col', className)}>{children}</aside>
 
-      <aside
-        className={cn(
-          'h-full hidden lg:flex flex-col lg:w-full lg:max-w-[300px] lg:fixed left-0 top-0 lg:border-r',
-          className,
-        )}
-      >
-        {children}
-      </aside>
-
-      <DefaultSidebarMobile isOpen={isOpen} onOpenChange={onOpenChange}>
-        {children}
-      </DefaultSidebarMobile>
+      {mobileSheet && (
+        <DefaultSidebarMobileSheet
+          className="lg:hidden"
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+        >
+          {children}
+        </DefaultSidebarMobileSheet>
+      )}
     </>
   );
 }
@@ -176,7 +175,7 @@ export function DefaultSidebarMobileButton({
   );
 }
 
-function DefaultSidebarMobile({
+function DefaultSidebarMobileSheet({
   className,
   children,
   isOpen,

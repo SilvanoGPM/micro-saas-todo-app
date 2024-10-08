@@ -15,5 +15,13 @@ export const ROUTES = {
     settings: {
       path: '/configuracoes',
     },
+
+    theme: {
+      path: '/configuracoes/tema',
+    },
+
+    billing: {
+      path: '/configuracoes/assinatura',
+    },
   },
 };

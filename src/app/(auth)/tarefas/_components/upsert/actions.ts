@@ -22,7 +22,7 @@ export const upsertTodoAction = actionsClient.createAction({
         return { error: 'Tarefa não encontrada.' };
       }
 
-      return await prisma.todo.update({
+      await prisma.todo.update({
         where: {
           id: todo.id,
         },
@@ -32,6 +32,8 @@ export const upsertTodoAction = actionsClient.createAction({
           completedAt: data.completedAt,
         },
       });
+
+      return;
     }
 
     await prisma.todo.create({

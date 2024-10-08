@@ -80,7 +80,7 @@ export const sharedConfig = {
   ],
 } as NextAuthConfig;
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   session: { strategy: 'jwt' },
   adapter: PrismaAdapter(prisma),
 
@@ -107,7 +107,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
 
-    async jwt({ token }) {
+    async jwt({ token, trigger, session }) {
+      if (trigger === 'update' && session) {
+        token = { ...token, ...session.user };
+
+        return token;
+      }
+
       return token;
     },
   },
