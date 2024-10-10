@@ -8,6 +8,7 @@ import { upsertTodoSchema } from './schema';
 export const upsertTodoAction = actionsClient.createAction({
   id: 'todo.upsert',
   schema: upsertTodoSchema,
+  revalidate: true,
 
   async handler({ data, context }) {
     if (data.id) {

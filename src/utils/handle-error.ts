@@ -41,6 +41,10 @@ export function handleError(
     description = 'Problemas no servidor';
   }
 
+  if (description === 'Erro desconhecido') {
+    description = defaultMessage;
+  }
+
   toast[method](`Aconteceu um ${method === 'error' ? 'erro' : 'problema'}`, {
     description,
   });

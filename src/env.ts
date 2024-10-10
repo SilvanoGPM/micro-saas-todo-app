@@ -7,7 +7,13 @@ export const env = createEnv({
   },
 
   shared: {
-    NEXT_PUBLIC_APP_URL: z.string().optional(),
+    NEXT_PUBLIC_APP_URL: z
+      .string()
+      .optional()
+      .transform((value) => {
+        // Remove trailing slash
+        return value?.endsWith('/') ? value.slice(0, -1) : value;
+      }),
 
     NEXT_PUBLIC_USE_FAKES: z.string().optional(),
 
@@ -20,6 +26,10 @@ export const env = createEnv({
     EMAIL_HOST: z.string(),
     EMAIL_PORT: z.coerce.number(),
     EMAIL_FROM: z.string(),
+
+    STRIPE_PUBLISHABLE_KEY: z.string(),
+    STRIPE_SECRET_KEY: z.string(),
+    STRIPE_WEBHOOK_SECRET: z.string(),
   },
 
   runtimeEnv: {
@@ -33,5 +43,9 @@ export const env = createEnv({
     EMAIL_HOST: process.env.EMAIL_HOST,
     EMAIL_FROM: process.env.EMAIL_FROM,
     EMAIL_PORT: process.env.EMAIL_PORT,
+
+    STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   },
 });

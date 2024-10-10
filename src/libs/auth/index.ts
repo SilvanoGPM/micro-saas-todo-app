@@ -6,13 +6,14 @@ import github from 'next-auth/providers/github';
 import google from 'next-auth/providers/google';
 
 import { loginSchema } from '$app/(unauth)/login/_components/login-form/schema';
+import { createStripeCustomerIfNotExists } from '$libs/stripe';
 
 import { prisma } from '../prisma';
 
 import { EmailNotFoundError } from './errors/email-not-found';
 import { EmailNotVerifiedError } from './errors/email-not-verified';
-import { ROUTES } from './routes';
 import { IncorrectProviderError } from './errors/incorrect-provider';
+import { ROUTES } from './routes';
 
 export const sharedConfig = {
   providers: [
@@ -115,6 +116,15 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       }
 
       return token;
+    },
+  },
+
+  events: {
+    createUser: async (message) => {
+      await createStripeCustomerIfNotExists({
+        email: message.user.email as string,
+        name: message.user.name as string,
+      });
     },
   },
 

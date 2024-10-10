@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { z } from 'zod';
 import { Session } from 'next-auth';
+import { z } from 'zod';
+import { revalidatePath } from 'next/cache';
 
 import { auth } from '$libs/auth';
 import { errorToJson } from '$utils/handle-error';
@@ -28,6 +29,7 @@ export interface CreateActionParams<
 > {
   id: string;
   schema: z.ZodSchema<S>;
+  revalidate?: true | string;
   handler: (params: P extends true ? HandlerParams<S, C> : S) => Promise<R>;
   withContext?: P;
 }
@@ -61,6 +63,7 @@ class ActionsClient {
     id,
     schema,
     handler,
+    revalidate,
     withContext = true as P,
   }: CreateActionParams<S, R, Awaited<ReturnType<typeof this.getContext>>, P>) {
     const actionAlreadyExists = this.actions.some((action) => action.id === id);
@@ -87,6 +90,10 @@ class ActionsClient {
 
         if (result && typeof result === 'object' && 'error' in result) {
           return { data: null, error: result.error };
+        }
+
+        if (revalidate) {
+          revalidatePath(revalidate === true ? '/' : revalidate);
         }
 
         return { data: result, error: null };
@@ -126,6 +133,19 @@ class ActionsClient {
     });
 
     return fn;
+  }
+
+  error(message: string) {
+    return { error: message } as any;
+  }
+
+  emptySchema() {
+    return z
+      .object({})
+      .optional()
+      .or(z.undefined().optional())
+      .or(z.null().optional())
+      .or(z.void().optional());
   }
 
   private async getContext() {

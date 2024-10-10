@@ -48,6 +48,11 @@ model User {
   sessions      Session[]
   Todo          Todo[]
 
+  stripeCustomerId         String?
+  stripeSubscriptionId     String?
+  stripeSubscriptionStatus String?
+  stripePriceId            String?
+
   @@map("users")
 }
 

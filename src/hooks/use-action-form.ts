@@ -100,8 +100,6 @@ export function useActionForm<
     }
   }, [fetcher, form]);
 
-  console.log(form.formState);
-
   return {
     ...form,
     isFetching,

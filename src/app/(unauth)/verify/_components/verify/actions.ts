@@ -1,6 +1,7 @@
 'use server';
 
 import { prisma } from '$libs/prisma';
+import { createStripeCustomerIfNotExists } from '$libs/stripe';
 import { redirectToLogin } from '$utils/redirect-to-login';
 
 export async function verifyToken(token?: string) {
@@ -21,6 +22,11 @@ export async function verifyToken(token?: string) {
     return redirectToLogin('warning', 'Código expirado');
   }
 
+  const user = await prisma.user.findUnique({
+    where: { email: verificationToken.identifier },
+    select: { name: true },
+  });
+
   await prisma.$transaction(async (tx) => {
     await tx.verificationToken.deleteMany({
       where: { identifier: verificationToken.identifier },
@@ -30,6 +36,11 @@ export async function verifyToken(token?: string) {
       where: { email: verificationToken.identifier },
       data: { emailVerified: new Date() },
     });
+  });
+
+  await createStripeCustomerIfNotExists({
+    email: verificationToken.identifier,
+    name: user?.name || undefined,
   });
 
   return redirectToLogin('success', 'Verificação realizada com sucesso');
