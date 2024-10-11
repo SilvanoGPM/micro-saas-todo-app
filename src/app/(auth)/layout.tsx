@@ -1,17 +1,11 @@
 import { PropsWithChildren } from 'react';
 
-import { auth } from '$libs/auth';
+import { getCurrentUser } from '$libs/auth/get-current-user';
 
 import { MainSidebar } from './_components/main-sidebar';
 
 export default async function AuthLayout({ children }: PropsWithChildren) {
-  const session = await auth();
-
-  const user = {
-    name: session?.user?.name || 'Usuário',
-    email: session?.user?.email || 'user@mail.com',
-    avatar: session?.user?.image || '',
-  };
+  const user = await getCurrentUser();
 
   return (
     <div className="h-dvh w-full flex flex-col lg:flex-row">

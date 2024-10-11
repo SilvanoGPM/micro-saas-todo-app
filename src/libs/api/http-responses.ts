@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 
-function respond(data: unknown, status: number) {
+function respond<T>(data: T, status: number) {
   return NextResponse.json(data, { status });
 }
 
-function ok(data: unknown) {
+function ok<T>(data: T) {
   return respond(data, 200);
 }
 

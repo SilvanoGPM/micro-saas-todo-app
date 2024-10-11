@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: 'Tarefas',
 };
 
-export default async function DashboardPage() {
+export default function DashboardPage() {
   return (
     <DefaultPage>
       <DefaultPageHeader>

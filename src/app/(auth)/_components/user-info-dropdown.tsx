@@ -46,14 +46,14 @@ export function UserInfoDropdown({ user }: MainSidebarProps) {
       <div className="flex gap-2 items-center max-w-[60%]">
         <DropdownMenuTrigger>
           <Avatar>
-            <AvatarImage src={user.avatar} alt={user.name} />
-            <AvatarFallback>{user.name[0]}</AvatarFallback>
+            <AvatarImage src={user.image || ''} alt={user?.name || ''} />
+            <AvatarFallback>{user?.name?.[0] || 'U'}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
 
         <div className="max-w-full">
-          <p title={user.name} className="truncate">
-            {getFirstString(user.name)}
+          <p title={user?.name || ''} className="truncate">
+            {getFirstString(user.name || '')}
           </p>
 
           <p

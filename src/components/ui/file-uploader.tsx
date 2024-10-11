@@ -1,20 +1,19 @@
 'use client';
 
+import { FileTextIcon, UploadIcon, XIcon } from 'lucide-react';
 import * as React from 'react';
-import Image from 'next/image';
-import { XIcon, FileTextIcon, UploadIcon } from 'lucide-react';
 import Dropzone, {
   type DropzoneProps,
   type FileRejection,
 } from 'react-dropzone';
 import { toast } from 'sonner';
 
-import { formatBytes } from '$utils/file';
-import { useControllableState } from '$hooks/use-controllable-state';
 import { Button } from '$components/ui/button';
 import { Progress } from '$components/ui/progress';
 import { ScrollArea } from '$components/ui/scroll-area';
+import { useControllableState } from '$hooks/use-controllable-state';
 import { cn } from '$utils/cn';
+import { formatBytes } from '$utils/file';
 
 export type ExtendedFile = File & { url?: string };
 

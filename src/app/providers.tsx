@@ -8,8 +8,8 @@ import { ReactNode } from 'react';
 
 import { Toaster } from '$components/ui/sonner';
 import { TooltipProvider } from '$components/ui/tooltip';
-import { queryClient } from '$libs/react-query';
 import { useFlashMessage } from '$hooks/use-flash-message';
+import { queryClient } from '$libs/react-query';
 
 export function Providers({ children }: { children: ReactNode }) {
   useFlashMessage();

@@ -1,7 +1,8 @@
 import Stripe from 'stripe';
 
 import { env } from '$env';
-import { handleProccessWebhookUpdatedSubscription, stripe } from '$libs/stripe';
+import { handleProccessWebhookUpdatedSubscription } from '$libs/stripe/handlers';
+import { stripe } from '$libs/stripe';
 
 export async function POST(req: Request) {
   const body = await req.text();

@@ -1,6 +1,6 @@
 import { Metadata, Viewport } from 'next';
 import dynamic from 'next/dynamic';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, Suspense } from 'react';
 
 import { defaultFont } from '$styles/font';
 import '$styles/globals.css';
@@ -44,7 +44,9 @@ export default function RootLayout({ children }: PropsWithChildren) {
       >
         <EnableMSW />
 
-        <Providers>{children}</Providers>
+        <Suspense>
+          <Providers>{children}</Providers>
+        </Suspense>
       </body>
     </html>
   );

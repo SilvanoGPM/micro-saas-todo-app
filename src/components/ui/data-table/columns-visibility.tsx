@@ -1,5 +1,5 @@
 import { Table } from '@tanstack/react-table';
-import { ColumnsIcon, Settings2Icon } from 'lucide-react';
+import { Settings2Icon } from 'lucide-react';
 
 import { Button } from '$components/ui/button';
 import {

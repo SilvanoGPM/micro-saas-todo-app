@@ -25,6 +25,10 @@ export async function handleAction<T extends object>(
 
     return rest as WithoutError<T>;
   } catch (error) {
-    throw new ActionError((error as any).error, 'error');
+    if (error instanceof ActionError) {
+      throw error;
+    }
+
+    throw new ActionError(error as any, 'error');
   }
 }

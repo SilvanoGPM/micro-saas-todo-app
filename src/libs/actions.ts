@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Session } from 'next-auth';
-import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
 import { auth } from '$libs/auth';
 import { errorToJson } from '$utils/handle-error';
-import { Replace } from '$utils/replace';
 
 export interface Action<S = any, R = any> {
   id: string;
@@ -89,7 +87,11 @@ class ActionsClient {
         }
 
         if (result && typeof result === 'object' && 'error' in result) {
-          return { data: null, error: result.error };
+          return {
+            data: null,
+            error: result.error,
+            status: (result as any)?.status || 'error',
+          };
         }
 
         if (revalidate) {
@@ -156,10 +158,7 @@ class ActionsClient {
     }
 
     return {
-      user: session.user as Replace<
-        Session['user'],
-        { id: string; email: string }
-      >,
+      user: session.user,
     };
   }
 }

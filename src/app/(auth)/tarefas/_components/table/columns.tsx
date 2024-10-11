@@ -161,8 +161,10 @@ function ActionsCell({ row, setSelectedTodoId }: ActionsCellProps) {
 
   function handleExecuteAction(type: 'toggleCompletedAt' | 'delete') {
     return (event: React.MouseEvent) => {
-      event.stopPropagation();
-      event.preventDefault();
+      if (type === 'toggleCompletedAt') {
+        event.stopPropagation();
+        event.preventDefault();
+      }
 
       startTransition(async () => {
         try {

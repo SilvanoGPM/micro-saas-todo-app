@@ -4,6 +4,7 @@ import { HomeIcon, SettingsIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useShallow } from 'zustand/react/shallow';
+import { Session } from 'next-auth';
 
 import {
   DefaultSidebar,
@@ -27,11 +28,7 @@ import { isPathActive } from '$utils/is-path-active';
 import { UserInfoDropdown } from './user-info-dropdown';
 
 export interface MainSidebarProps {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
+  user: Session['user'];
 }
 
 const links = [

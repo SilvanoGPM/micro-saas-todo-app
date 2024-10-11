@@ -52,6 +52,7 @@ model User {
   stripeSubscriptionId     String?
   stripeSubscriptionStatus String?
   stripePriceId            String?
+  stripeUpgradedAt         DateTime?
 
   @@map("users")
 }

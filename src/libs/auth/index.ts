@@ -6,7 +6,7 @@ import github from 'next-auth/providers/github';
 import google from 'next-auth/providers/google';
 
 import { loginSchema } from '$app/(unauth)/login/_components/login-form/schema';
-import { createStripeCustomerIfNotExists } from '$libs/stripe';
+import { createStripeCustomerIfNotExists } from '$libs/stripe/customers';
 
 import { prisma } from '../prisma';
 

@@ -1,7 +1,7 @@
 'use server';
 
 import { prisma } from '$libs/prisma';
-import { createStripeCustomerIfNotExists } from '$libs/stripe';
+import { createStripeCustomerIfNotExists } from '$libs/stripe/customers';
 import { redirectToLogin } from '$utils/redirect-to-login';
 
 export async function verifyToken(token?: string) {

@@ -1,5 +1,5 @@
 import { Session } from 'next-auth';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 import { auth } from '../auth';
 
@@ -18,7 +18,7 @@ export interface CreateGetRouteParams<P extends boolean = true> {
   id: string;
   handler: (
     params: P extends true ? HandlerParams : Omit<HandlerParams, 'user'>,
-  ) => Promise<unknown>;
+  ) => Promise<NextResponse>;
   withAuth?: P;
   errorMessage?: string;
 }
@@ -71,7 +71,7 @@ class ApiClient {
           const session = await auth();
 
           if (!session) {
-            throw new Error();
+            return;
           }
 
           user = session.user;

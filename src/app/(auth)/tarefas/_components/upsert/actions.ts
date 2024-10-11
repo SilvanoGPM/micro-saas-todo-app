@@ -2,6 +2,7 @@
 
 import { actionsClient } from '$libs/actions';
 import { prisma } from '$libs/prisma';
+import { getUserPlanDetails } from '$libs/stripe/products';
 
 import { upsertTodoSchema } from './schema';
 
@@ -35,6 +36,16 @@ export const upsertTodoAction = actionsClient.createAction({
       });
 
       return;
+    }
+
+    const planDetails = await getUserPlanDetails(context.user.id);
+
+    if (planDetails.quota.tasks.current >= planDetails.quota.tasks.max) {
+      return {
+        status: 'warning',
+        error:
+          'Limite de tarefas atingido. Assine um plano superior para criar mais tarefas.',
+      };
     }
 
     await prisma.todo.create({

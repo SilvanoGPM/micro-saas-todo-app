@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { auth } from '$libs/auth';
+import { getCurrentUser } from '$libs/auth/get-current-user';
 
 import { ProfileForm } from './_components/form';
 
@@ -9,11 +9,11 @@ export const metadata: Metadata = {
 };
 
 export default async function SettingsProfilePage() {
-  const session = await auth();
+  const user = await getCurrentUser();
 
   return (
     <>
-      <ProfileForm user={session?.user} />
+      <ProfileForm user={user} />
     </>
   );
 }

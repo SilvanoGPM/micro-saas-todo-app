@@ -22,7 +22,7 @@ const links = [
   },
 
   {
-    label: 'Planos',
+    label: 'Compras',
     href: ROUTES.private.billing.path,
     icon: CreditCardIcon,
   },
