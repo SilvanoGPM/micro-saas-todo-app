@@ -12,12 +12,13 @@ const withPWA = require('next-pwa')({
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['avatars.githubusercontent.com'],
+    remotePatterns: ['avatars.githubusercontent.com'],
   },
+
   experimental: {
-    appDir: true,
     serverComponentsExternalPackages: ['@prisma/client'],
   },
+
   eslint: {
     ignoreDuringBuilds: true,
   },

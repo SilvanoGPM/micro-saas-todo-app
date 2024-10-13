@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { getBaseUrl } from '$utils/metadata';
+
 export const httpClient = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: `${getBaseUrl()}/api`,
 });
