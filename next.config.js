@@ -11,6 +11,13 @@ const withPWA = require('next-pwa')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  images: {
+    domains: ['avatars.githubusercontent.com'],
+  },
+  experimental: {
+    appDir: true,
+    serverComponentsExternalPackages: ['@prisma/client'],
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },

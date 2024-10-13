@@ -4,6 +4,8 @@ import { apiClient } from '$libs/api';
 import { byFieldsContaining, getPrismaPagination, prisma } from '$libs/prisma';
 import { HTTP_KEYS } from '$config';
 
+export const dynamic = 'force-dynamic';
+
 export const GET = apiClient.createGetRoute({
   id: HTTP_KEYS.todo.list,
 

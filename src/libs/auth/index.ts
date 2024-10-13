@@ -81,7 +81,7 @@ export const sharedConfig = {
   ],
 } as NextAuthConfig;
 
-export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
+export const authOptions = NextAuth({
   session: { strategy: 'jwt' },
   adapter: PrismaAdapter(prisma),
 
@@ -132,3 +132,5 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
 
   ...sharedConfig,
 });
+
+export const { handlers, auth, signIn, signOut, unstable_update } = authOptions;
