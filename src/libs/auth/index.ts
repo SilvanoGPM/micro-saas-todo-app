@@ -121,6 +121,8 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
 
   events: {
     createUser: async (message) => {
+      console.log('Aqui', message);
+
       await createStripeCustomerIfNotExists({
         email: message.user.email as string,
         name: message.user.name as string,
