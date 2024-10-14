@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "next dev",
     "dev:test": "dotenv -e .env.test next dev",
-    "build": "npm run lint && prisma generate && next build",
+    "prebuild": "npx eslint src --fix",
+    "build": "prisma generate && next build",
     "analyze": "cross-env ANALYZE=true next build",
     "start": "next start",
     "lint": "eslint src --fix",
