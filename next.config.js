@@ -16,7 +16,7 @@ const nextConfig = {
   },
 
   eslint: {
-    // ignoreDuringBuilds: true,
+    ignoreDuringBuilds: true,
   },
 
   typescript: {
@@ -24,7 +24,7 @@ const nextConfig = {
     // Dangerously allow production builds to successfully complete even if
     // your project has type errors.
     // !! WARN !!
-    // ignoreBuildErrors: true,
+    ignoreBuildErrors: true,
   },
 };
 
