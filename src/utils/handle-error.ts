@@ -4,6 +4,10 @@ import { ActionError } from '$libs/errors/action-error';
 
 export const errorsToWarning = ['Unauthorized', 'Not Found'];
 
+export const descriptionsMap = {
+  OAuthAccountNotLinked: 'E-mail já foi utilizado em outro método de login',
+};
+
 export function handleError(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error: any,
@@ -25,7 +29,7 @@ export function handleError(
 
   const actionErrorStatus = error instanceof ActionError && error?.status;
 
-  const method =
+  let method =
     methodOverride ||
     (errorsToWarning.includes(error?.response?.data?.error) ||
     is422Error ||
@@ -39,6 +43,14 @@ export function handleError(
 
   if (is500Error) {
     description = 'Problemas no servidor';
+  }
+
+  const descriptionMap =
+    descriptionsMap[description as keyof typeof descriptionsMap];
+
+  if (descriptionMap) {
+    description = descriptionMap;
+    method = 'warning';
   }
 
   if (description === 'Erro desconhecido') {

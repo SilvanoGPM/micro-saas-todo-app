@@ -2,15 +2,32 @@
 
 import Image from 'next/image';
 import { parseAsString, useQueryState } from 'nuqs';
+import { useEffect } from 'react';
 
 import { ToggleThemeButton } from '$components/toggle-theme';
+import { handleError } from '$utils/handle-error';
 
 import { ForgotPasswordForm } from './_components/forget-password-form';
 import { LoginForm } from './_components/login-form';
 import { RegisterForm } from './_components/register-form';
 
+let errorShowed = false;
+
 export default function LoginPage() {
   const [tab, setTab] = useQueryState('tab', parseAsString);
+  const [error, setError] = useQueryState('error', parseAsString);
+
+  useEffect(() => {
+    if (error && !errorShowed) {
+      errorShowed = true;
+      setError(null);
+
+      // Timeout para executar o toast.
+      setTimeout(() => {
+        handleError(error);
+      }, 100);
+    }
+  }, [error, setError]);
 
   return (
     <div className="w-full h-full flex-1 flex">

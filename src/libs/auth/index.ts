@@ -100,6 +100,24 @@ export const authOptions = NextAuth({
       return isAuthenticated;
     },
 
+    // async signIn({ user, account, profile }) {
+    //   if (account?.provider === "github" || account?.provider === "google") {
+    //     // Verifique se o e-mail já está associado a um outro provedor
+    //     const existingUser = await prisma.user.findUnique({
+    //       where: { email: user.email }
+    //     });
+
+    //     if (existingUser) {
+    //       if (existingUser.provider !== account.provider) {
+    //         throw new Error(
+    //           `Email is already associated with another provider (${existingUser.provider}).`
+    //         );
+    //       }
+    //     }
+    //   }
+    //   return true;
+    // },
+
     async session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
@@ -121,8 +139,6 @@ export const authOptions = NextAuth({
 
   events: {
     createUser: async (message) => {
-      console.log('Aqui', message);
-
       await createStripeCustomerIfNotExists({
         email: message.user.email as string,
         name: message.user.name as string,
