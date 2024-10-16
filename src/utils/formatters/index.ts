@@ -48,6 +48,19 @@ export function formatPrice(
 }
 
 /**
+ * Converte a primeira letra de uma string para maiúscula e o restante para minúscula.
+ *
+ * @param string - A string a ser convertida.
+ */
+export function titleString(string: string) {
+  if (!string) {
+    return;
+  }
+
+  return string[0].toUpperCase() + string.slice(1).toLowerCase();
+}
+
+/**
  * Remove todos os caracteres não numéricos de uma string.
  *
  * @param string - A string da qual serão removidos todos os caracteres que não sejam números.

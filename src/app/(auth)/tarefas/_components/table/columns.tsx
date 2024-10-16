@@ -31,22 +31,23 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '$components/ui/tooltip';
-import { Todo } from '$http/todos';
 import { HTTP_KEYS } from '$config';
+import { Todo } from '$http/todos';
 import { handleAction } from '$utils/handle-action';
 import { handleError } from '$utils/handle-error';
 
-import { deleteTodoAction, toggleCompletedAtTodoAction } from './actions';
+import { toggleCompletedAtTodoAction } from './actions';
 
 interface GetColumnsParams {
-  setSelectedTodoId: (id: string) => void;
+  setTodoToEdit: (id: string) => void;
+  setTodoToDelete: (id: string) => void;
 }
 
 interface ActionsCellProps extends GetColumnsParams {
   row: Row<Todo>;
 }
 
-export const getColumns = ({ setSelectedTodoId }: GetColumnsParams) =>
+export const getColumns = (props: GetColumnsParams) =>
   [
     {
       id: 'select',
@@ -144,46 +145,40 @@ export const getColumns = ({ setSelectedTodoId }: GetColumnsParams) =>
       header: 'Ações',
       enableHiding: false,
 
-      cell: ({ row }) => (
-        <MemoizedActionsCell row={row} setSelectedTodoId={setSelectedTodoId} />
-      ),
+      cell: ({ row }) => <MemoizedActionsCell row={row} {...props} />,
     },
   ] as ColumnDef<Todo>[];
 
 const MemoizedActionsCell = memo(ActionsCell);
 
-function ActionsCell({ row, setSelectedTodoId }: ActionsCellProps) {
+function ActionsCell({
+  row,
+  setTodoToDelete,
+  setTodoToEdit,
+}: ActionsCellProps) {
   const item = row.original;
 
   const queryClient = useQueryClient();
 
   const [isPending, startTransition] = useTransition();
 
-  function handleExecuteAction(type: 'toggleCompletedAt' | 'delete') {
-    return (event: React.MouseEvent) => {
-      if (type === 'toggleCompletedAt') {
-        event.stopPropagation();
-        event.preventDefault();
+  function handleToggleCompletedAt(event: React.MouseEvent) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    startTransition(async () => {
+      try {
+        const data = { id: item.id };
+
+        await handleAction(toggleCompletedAtTodoAction, data);
+
+        await queryClient.invalidateQueries({
+          queryKey: [HTTP_KEYS.todo.list],
+        });
+      } catch (error) {
+        handleError(error);
       }
-
-      startTransition(async () => {
-        try {
-          const data = { id: item.id };
-
-          if (type === 'toggleCompletedAt') {
-            await handleAction(toggleCompletedAtTodoAction, data);
-          } else if (type === 'delete') {
-            await handleAction(deleteTodoAction, data);
-          }
-
-          await queryClient.invalidateQueries({
-            queryKey: [HTTP_KEYS.todo.list],
-          });
-        } catch (error) {
-          handleError(error);
-        }
-      });
-    };
+    });
   }
 
   return (
@@ -201,7 +196,7 @@ function ActionsCell({ row, setSelectedTodoId }: ActionsCellProps) {
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={handleExecuteAction('toggleCompletedAt')}
+            onClick={handleToggleCompletedAt}
             disabled={isPending}
           >
             {isPending ? (
@@ -216,7 +211,7 @@ function ActionsCell({ row, setSelectedTodoId }: ActionsCellProps) {
           </DropdownMenuItem>
 
           <DropdownMenuItem
-            onClick={() => setSelectedTodoId(item.id)}
+            onClick={() => setTodoToEdit(item.id)}
             disabled={isPending}
           >
             {isPending ? (
@@ -229,7 +224,7 @@ function ActionsCell({ row, setSelectedTodoId }: ActionsCellProps) {
 
           <DropdownMenuItem
             className="text-destructive"
-            onClick={handleExecuteAction('delete')}
+            onClick={() => setTodoToDelete(item.id)}
             disabled={isPending}
           >
             {isPending ? (
