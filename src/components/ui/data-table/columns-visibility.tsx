@@ -19,7 +19,7 @@ export function ColumnsVisibility<TData>({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="flex-1 md:flex-none" variant="outline">
+        <Button className="flex-1 md:flex-none" size="sm" variant="outline">
           <Settings2Icon className="size-4 mr-2" />
           Visualizar
         </Button>

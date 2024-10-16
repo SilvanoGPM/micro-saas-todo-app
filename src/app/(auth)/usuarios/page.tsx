@@ -8,23 +8,23 @@ import {
 } from '$components/dashboard/page';
 import { getCurrentUser } from '$libs/auth/get-current-user';
 
-import { MainTodosTable } from './_components/table';
+import { UsersTable } from './_components/table';
 
 export const metadata: Metadata = {
-  title: 'Tarefas',
+  title: 'Usuários',
 };
 
-export default async function TodosPage() {
+export default async function UsersPage() {
   const user = await getCurrentUser();
 
   return (
     <DefaultPage>
       <DefaultPageHeader>
-        <DefaultPageTitle>Tarefas</DefaultPageTitle>
+        <DefaultPageTitle>Usuários</DefaultPageTitle>
       </DefaultPageHeader>
 
       <DefaultPageSection>
-        <MainTodosTable user={user} />
+        <UsersTable user={user} />
       </DefaultPageSection>
     </DefaultPage>
   );

@@ -2,7 +2,7 @@ import { parseAsString, useQueryStates } from 'nuqs';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 
-import { flashMessageTypes } from '$utils/get-flash-message';
+import { flashMessageTypes } from '$utils/flash-messages';
 
 export function useFlashMessage() {
   const [queryParams, setQueryParams] = useQueryStates({

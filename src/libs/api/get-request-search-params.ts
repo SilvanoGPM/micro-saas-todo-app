@@ -47,5 +47,7 @@ export function getRequestSearchParams(
     sort: {
       [sortByKey]: sortDirection,
     },
+
+    get: req.nextUrl.searchParams.get.bind(req.nextUrl.searchParams),
   };
 }

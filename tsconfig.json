@@ -2,7 +2,7 @@
   "compilerOptions": {
     "types": ["node", "jest", "@testing-library/jest-dom"],
     "baseUrl": ".",
-    "target": "es5",
+    "target": "es2015",
     "lib": [
       "dom",
       "dom.iterable",

@@ -74,8 +74,6 @@ export async function upgradePlan(userEmail: string, priceId: string) {
       url: session.url,
     };
   } catch (error) {
-    console.log(error);
-
     throw new Error('Erro ao gerar sessão de checkout');
   }
 }
@@ -170,8 +168,6 @@ export async function buyProduct(userEmail: string, priceId: string) {
       url: session.url,
     };
   } catch (error) {
-    console.log(error);
-
     throw new Error('Erro ao tentar comprar produto');
   }
 }

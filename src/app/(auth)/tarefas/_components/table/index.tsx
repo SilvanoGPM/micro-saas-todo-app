@@ -1,41 +1,25 @@
 'use client';
 
-import { useQueryClient } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
+import { Session } from 'next-auth';
 
+import { TodosTable } from '$components/dashboard/todos/table';
 import { DeleteModal } from '$components/delete-modal';
-import { DataTable } from '$components/ui/data-table';
-import { useTableQueryParams } from '$components/ui/data-table/use-table-query-params';
 import { HTTP_KEYS } from '$config';
-import { useGetTodos } from '$http/todos';
 import { handleAction } from '$utils/handle-action';
 import { handleError } from '$utils/handle-error';
 
 import { UpsertTodoSheet } from '../upsert';
 
 import { deleteTodoAction } from './actions';
-import { getColumns } from './columns';
 
-export function TodosTable() {
-  const { search, page, size, sort, resetTableParams } = useTableQueryParams();
+export interface MainTodosTableProps {
+  user: Session['user'];
+}
 
+export function MainTodosTable({ user }: MainTodosTableProps) {
   const [todoToEdit, setTodoToEdit] = useState<string | null>(null);
   const [todoToDelete, setTodoToDelete] = useState<string | null>(null);
-
-  const queryClient = useQueryClient();
-
-  const usersQuery = useGetTodos({
-    search,
-    size,
-    page,
-    sort,
-  });
-
-  async function handleRefresh() {
-    await queryClient.invalidateQueries({ queryKey: [HTTP_KEYS.todo.list] });
-
-    resetTableParams();
-  }
 
   async function handleDelete(id: string) {
     try {
@@ -45,23 +29,12 @@ export function TodosTable() {
     }
   }
 
-  const columns = useMemo(
-    () => getColumns({ setTodoToEdit, setTodoToDelete }),
-    [setTodoToEdit],
-  );
-
   return (
     <>
-      <DataTable
-        onRefresh={handleRefresh}
-        columns={columns}
-        isLoading={usersQuery.isLoading}
-        isFetching={usersQuery.isFetching}
-        total={usersQuery.data?.total}
-        data={usersQuery.data?.data}
-        initialColumnVisibility={{
-          updatedAt: false,
-        }}
+      <TodosTable
+        user={user}
+        onEdit={setTodoToEdit}
+        onDelete={setTodoToDelete}
         actionButton={
           <UpsertTodoSheet
             todoId={todoToEdit}

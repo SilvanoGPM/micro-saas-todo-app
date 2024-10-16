@@ -11,11 +11,16 @@ import { BaseEntity, GetParams, MappedEntity, Page } from './types';
 export interface HttpTodo extends BaseEntity {
   id: string;
   title: string;
+  user: { id: string };
   description: string | null;
   completedAt: string | null;
 }
 
 export type Todo = MappedEntity<HttpTodo>;
+
+export interface GetTodosParams extends GetParams {
+  userId?: string;
+}
 
 export const TODOS_PATH = '/todos';
 
@@ -56,7 +61,7 @@ export function useGetTodoById({
 export function useGetTodos({
   enabled,
   ...params
-}: GetParams & {
+}: GetTodosParams & {
   enabled?: boolean;
 }) {
   return useQuery({

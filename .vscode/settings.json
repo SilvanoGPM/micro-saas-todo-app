@@ -17,5 +17,6 @@
       "--watchAll=false",
       "--color"
     ]
-  }
+  },
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }

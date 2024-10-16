@@ -1,16 +1,21 @@
 'use client';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { PlusCircleIcon } from 'lucide-react';
+import { Session } from 'next-auth';
+import { useMemo } from 'react';
 
 import { DataTable } from '$components/ui/data-table';
 import { useTableQueryParams } from '$components/ui/data-table/use-table-query-params';
+import { HTTP_KEYS } from '$config';
 import { useGetUsers } from '$http/users';
-import { Button } from '$components/ui/button';
 
-import { columns } from './columns';
+import { getColumns } from './columns';
 
-export default function TablePage() {
+export interface UsersTableProps {
+  user: Session['user'];
+}
+
+export function UsersTable({ user }: UsersTableProps) {
   const { search, page, size, sort, resetTableParams } = useTableQueryParams();
 
   const queryClient = useQueryClient();
@@ -22,33 +27,30 @@ export default function TablePage() {
     sort,
   });
 
-  async function handleRefreshUsers() {
-    await queryClient.invalidateQueries({ queryKey: ['users'] });
+  async function handleRefresh() {
+    await queryClient.invalidateQueries({ queryKey: [HTTP_KEYS.user.list] });
 
     resetTableParams();
   }
 
+  const columns = useMemo(() => getColumns({ user }), [user]);
+
   return (
-    <main className="p-8 flex flex-col items-center justify-center text-2xl font-bold">
+    <>
       <DataTable
-        onRefresh={handleRefreshUsers}
+        title="Usuários"
+        onRefresh={handleRefresh}
         columns={columns}
         isLoading={usersQuery.isLoading}
         isFetching={usersQuery.isFetching}
         total={usersQuery.data?.total}
         data={usersQuery.data?.data}
         initialColumnVisibility={{
+          id: false,
           createdAt: false,
           updatedAt: false,
-          uuid: false,
         }}
-        actionButton={
-          <Button className="flex-1">
-            <PlusCircleIcon className="size-4 mr-2" />
-            Adicionar usuário
-          </Button>
-        }
       />
-    </main>
+    </>
   );
 }

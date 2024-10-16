@@ -1,6 +1,6 @@
 'use client';
 
-import { HomeIcon, LockKeyholeIcon, SettingsIcon } from 'lucide-react';
+import { HomeIcon, SettingsIcon, Users2Icon } from 'lucide-react';
 import { Session } from 'next-auth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -40,9 +40,9 @@ const links = [
   },
 
   {
-    ...ROUTES.private.admin,
-    label: 'Administrador',
-    icon: LockKeyholeIcon,
+    ...ROUTES.private.users,
+    label: 'Usuários',
+    icon: Users2Icon,
   },
 
   {

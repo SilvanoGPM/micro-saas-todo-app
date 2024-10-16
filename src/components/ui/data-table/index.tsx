@@ -37,6 +37,7 @@ import {
   defaultPagination,
   exportTableToCSV,
   getCommonPinningStyles,
+  SORT_SEPARATOR,
 } from '$libs/react-table';
 
 import { BodySkeleton } from './body-skeleton';
@@ -48,6 +49,7 @@ import {
 } from './use-table-query-params';
 
 export interface DataTableProps<TData extends object, TValue> {
+  tableName: string;
   isLoading?: boolean;
   isFetching?: boolean;
   columns: ColumnDef<TData, TValue>[];
@@ -62,6 +64,7 @@ export interface DataTableProps<TData extends object, TValue> {
 }
 
 export function DataTable<TData extends object, TValue>({
+  tableName,
   columns,
   isLoading = false,
   isFetching = false,
@@ -97,7 +100,7 @@ export function DataTable<TData extends object, TValue>({
   );
 
   const sorting = useMemo(() => {
-    const [id, direction] = sort.split(',');
+    const [id, direction] = sort.split(SORT_SEPARATOR);
 
     const desc = direction === 'desc';
 
@@ -186,12 +189,12 @@ export function DataTable<TData extends object, TValue>({
           </div>
         </div>
 
-        <div className="flex-1 flex flex-wrap gap-2 w-full lg:w-[fit-content]">
+        <div className="flex-1 flex justify-end flex-wrap gap-2 w-full lg:w-[fit-content]">
           <Button
             size="icon"
             variant="outline"
             onClick={onRefresh}
-            className="flex-shrink-0"
+            className="flex-shrink-0 h-9"
             disabled={isFetching}
           >
             <RotateCwIcon
@@ -201,18 +204,25 @@ export function DataTable<TData extends object, TValue>({
 
           <ColumnsVisibility table={table} />
 
-          <Button
-            variant="outline"
-            onClick={() =>
-              exportTableToCSV(table, {
-                filename: 'tasks',
-                excludeColumns: ['select', 'actions'],
-              })
-            }
-          >
-            <DownloadIcon className="mr-2 size-4" aria-hidden="true" />
-            Exportar
-          </Button>
+          {table.getSelectedRowModel().rows.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                exportTableToCSV(table, {
+                  filename: tableName || 'Dados',
+                  onlySelected: true,
+                  excludeColumns: ['select', 'actions'],
+                })
+              }
+            >
+              <DownloadIcon className="mr-2 size-4" aria-hidden="true" />
+              Exportar{' '}
+              {table.getSelectedRowModel().rows.length > 0
+                ? `(${table.getSelectedRowModel().rows.length})`
+                : ''}
+            </Button>
+          )}
 
           {rowsSelectedActions.map((Action, idx) => (
             <div

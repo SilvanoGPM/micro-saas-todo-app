@@ -19,7 +19,10 @@ export function getPrismaPagination(page: number, size: number) {
   };
 }
 
-export function byFieldsContaining(fields: string[], search?: string) {
+export function byFieldsContaining<T extends object = object>(
+  fields: Array<keyof T>,
+  search?: string,
+) {
   if (!search) {
     return undefined;
   }

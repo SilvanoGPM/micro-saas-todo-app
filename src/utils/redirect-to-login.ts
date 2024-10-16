@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 
 import { ROUTES } from '$libs/auth/routes';
 
-import { flashMessageTypes, getFlashMessage } from './get-flash-message';
+import { flashMessageTypes, getFlashMessage } from './flash-messages';
 
 export function redirectToLogin(
   type: keyof typeof flashMessageTypes,

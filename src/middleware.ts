@@ -4,7 +4,7 @@ import { applyTokenToSession } from '$libs/auth/callbacks';
 import { authProvidersConfig } from '$libs/auth/config';
 import { hasSomeRoles, isAdmin } from '$libs/auth/roles';
 import { getPrivatePathRoles, ROUTES } from '$libs/auth/routes';
-import { getFlashMessage } from '$utils/get-flash-message';
+import { getFlashMessage } from '$utils/flash-messages';
 
 const { auth } = NextAuth({
   ...authProvidersConfig,

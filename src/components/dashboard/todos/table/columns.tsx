@@ -11,6 +11,7 @@ import {
   MoreHorizontal,
   TrashIcon,
 } from 'lucide-react';
+import { Session } from 'next-auth';
 import { memo, useTransition } from 'react';
 
 import { Badge } from '$components/ui/badge';
@@ -39,8 +40,9 @@ import { handleError } from '$utils/handle-error';
 import { toggleCompletedAtTodoAction } from './actions';
 
 interface GetColumnsParams {
-  setTodoToEdit: (id: string) => void;
-  setTodoToDelete: (id: string) => void;
+  user: Session['user'];
+  setTodoToEdit?: (id: string) => void;
+  setTodoToDelete?: (id: string) => void;
 }
 
 interface ActionsCellProps extends GetColumnsParams {
@@ -153,6 +155,7 @@ const MemoizedActionsCell = memo(ActionsCell);
 
 function ActionsCell({
   row,
+  user,
   setTodoToDelete,
   setTodoToEdit,
 }: ActionsCellProps) {
@@ -168,9 +171,9 @@ function ActionsCell({
 
     startTransition(async () => {
       try {
-        const data = { id: item.id };
-
-        await handleAction(toggleCompletedAtTodoAction, data);
+        await handleAction(toggleCompletedAtTodoAction, {
+          id: item.id,
+        });
 
         await queryClient.invalidateQueries({
           queryKey: [HTTP_KEYS.todo.list],
@@ -197,7 +200,7 @@ function ActionsCell({
 
           <DropdownMenuItem
             onClick={handleToggleCompletedAt}
-            disabled={isPending}
+            disabled={user.id !== row.original.user.id || isPending}
           >
             {isPending ? (
               <Loader2Icon className="animate-spin mr-2 size-3" />
@@ -211,8 +214,8 @@ function ActionsCell({
           </DropdownMenuItem>
 
           <DropdownMenuItem
-            onClick={() => setTodoToEdit(item.id)}
-            disabled={isPending}
+            onClick={() => setTodoToEdit?.(item.id)}
+            disabled={!setTodoToEdit || isPending}
           >
             {isPending ? (
               <Loader2Icon className="animate-spin mr-2 size-3" />
@@ -224,8 +227,8 @@ function ActionsCell({
 
           <DropdownMenuItem
             className="text-destructive"
-            onClick={() => setTodoToDelete(item.id)}
-            disabled={isPending}
+            onClick={() => setTodoToDelete?.(item.id)}
+            disabled={!setTodoToDelete || isPending}
           >
             {isPending ? (
               <Loader2Icon className="animate-spin mr-2 size-3" />
