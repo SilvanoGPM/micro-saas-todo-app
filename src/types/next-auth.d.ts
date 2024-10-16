@@ -1,9 +1,23 @@
-import { User } from '@prisma/client';
-
-import { Replace } from '$utils/replace';
+import 'next-auth/jwt';
 
 declare module 'next-auth' {
   interface Session {
-    user: Replace<User, { email: string }>;
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      image: string;
+      roles: string;
+    };
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id: string;
+    name: string;
+    email: string;
+    image: string;
+    roles: string;
   }
 }

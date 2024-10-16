@@ -2,6 +2,8 @@ import * as Sentry from '@sentry/nextjs';
 import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { hasAllRoles, hasSomeRoles, isAdmin, UserRole } from '$libs/auth/roles';
+
 import { auth } from '../auth';
 
 import { getRequestSearchParams } from './get-request-search-params';
@@ -13,14 +15,25 @@ export interface HandlerParams {
   searchParams: ReturnType<typeof getRequestSearchParams>;
   pathParams: { [key: string]: string };
   httpResponses: typeof httpResponses;
+
+  authorization: {
+    mode?: 'some' | 'all';
+    roles: UserRole[];
+    bypassWhenIsAdmin?: boolean;
+  };
 }
 
 export interface CreateGetRouteParams<P extends boolean = true> {
   id: string;
   handler: (
-    params: P extends true ? HandlerParams : Omit<HandlerParams, 'user'>,
+    params: P extends true
+      ? HandlerParams
+      : Omit<HandlerParams, 'user' | 'authorization'>,
   ) => Promise<NextResponse>;
   withAuth?: P;
+
+  authorization?: HandlerParams['authorization'];
+
   errorMessage?: string;
 }
 
@@ -52,12 +65,18 @@ class ApiClient {
     this.afterRouteExecute = afterRouteExecute;
   }
 
-  createGetRoute<P extends boolean = true>({
-    id,
-    handler,
-    errorMessage = 'Não foi possível encontrar registros.',
-    withAuth = true as P,
-  }: CreateGetRouteParams<P>) {
+  createGetRoute<P extends boolean = true>(
+    routeParams: P extends true
+      ? CreateGetRouteParams<P>
+      : Omit<CreateGetRouteParams<P>, 'authorization'>,
+  ) {
+    const {
+      id,
+      handler,
+      errorMessage = 'Não foi possível encontrar registros.',
+      withAuth = true as P,
+    } = routeParams;
+
     const routeAlreadyExists = this.routes.some(
       (route) => route.id === id && route.method === 'GET',
     );
@@ -73,6 +92,7 @@ class ApiClient {
       let user: Session['user'] | undefined;
       let ocurredError: unknown | null = null;
       let data: unknown | null = null;
+      let authorization: HandlerParams['authorization'] | undefined;
 
       if (withAuth) {
         try {
@@ -83,6 +103,28 @@ class ApiClient {
           }
 
           user = session.user;
+
+          authorization = (routeParams as CreateGetRouteParams<true>)
+            .authorization || {
+            roles: [],
+          };
+
+          authorization.mode = authorization.mode ?? 'some';
+
+          authorization.bypassWhenIsAdmin =
+            authorization.bypassWhenIsAdmin ?? true;
+
+          const hasRoles =
+            authorization.mode === 'some' ? hasSomeRoles : hasAllRoles;
+
+          const allowUser =
+            authorization.roles.length === 0 ||
+            hasRoles(user, ...authorization.roles) ||
+            (authorization.bypassWhenIsAdmin && isAdmin(user));
+
+          if (!allowUser) {
+            return httpResponses.forbidden();
+          }
         } catch (error) {
           ocurredError = error;
 
@@ -104,6 +146,7 @@ class ApiClient {
           searchParams,
           pathParams: params,
           user,
+          authorization,
 
           httpResponses,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any

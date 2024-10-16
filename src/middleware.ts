@@ -1,9 +1,24 @@
 import NextAuth from 'next-auth';
 
-import { sharedConfig } from '$libs/auth';
-import { ROUTES } from '$libs/auth/routes';
+import { applyTokenToSession } from '$libs/auth/callbacks';
+import { authProvidersConfig } from '$libs/auth/config';
+import { hasSomeRoles, isAdmin } from '$libs/auth/roles';
+import { getPrivatePathRoles, ROUTES } from '$libs/auth/routes';
+import { getFlashMessage } from '$utils/get-flash-message';
 
-const { auth } = NextAuth(sharedConfig);
+const { auth } = NextAuth({
+  ...authProvidersConfig,
+
+  callbacks: {
+    session({ token, session }) {
+      if (token && session.user) {
+        return applyTokenToSession(token, session);
+      }
+
+      return session;
+    },
+  },
+});
 
 const authRoutes = Object.values(ROUTES.auth);
 
@@ -34,6 +49,32 @@ export default auth((req) => {
     loginUrl.searchParams.set('redirectTo', encodeURI(req.nextUrl.pathname));
 
     return Response.redirect(loginUrl);
+  }
+
+  if (isLoggedIn && !isAuthRoute) {
+    const routeRoles = getPrivatePathRoles(req.nextUrl.pathname);
+    const user = req.auth!.user;
+
+    if (!user || !user.roles) {
+      return;
+    }
+
+    if (routeRoles.length === 0 || isAdmin(user)) {
+      return;
+    }
+
+    const userHasRoles = hasSomeRoles(user, ...routeRoles);
+
+    if (!userHasRoles) {
+      const homeUrl = new URL(ROUTES.private.home.path, req.nextUrl);
+
+      const message = getFlashMessage(
+        'warning',
+        'Você não tem permissão para acessar essa página.',
+      );
+
+      return Response.redirect(`${homeUrl}?${message}`);
+    }
   }
 
   return;

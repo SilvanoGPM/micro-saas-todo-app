@@ -1,10 +1,10 @@
 'use client';
 
-import { HomeIcon, SettingsIcon } from 'lucide-react';
+import { HomeIcon, LockKeyholeIcon, SettingsIcon } from 'lucide-react';
+import { Session } from 'next-auth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useShallow } from 'zustand/react/shallow';
-import { Session } from 'next-auth';
 
 import {
   DefaultSidebar,
@@ -21,6 +21,7 @@ import {
 import { Logo } from '$components/logo';
 import { ToggleThemeButton } from '$components/toggle-theme';
 import { ScrollArea } from '$components/ui/scroll-area';
+import { hasSomeRoles, isAdmin } from '$libs/auth/roles';
 import { ROUTES } from '$libs/auth/routes';
 import { useUIStore } from '$stores/ui';
 import { isPathActive } from '$utils/is-path-active';
@@ -32,11 +33,21 @@ export interface MainSidebarProps {
 }
 
 const links = [
-  { label: 'Tarefas', href: ROUTES.private.home.path, icon: HomeIcon },
+  {
+    ...ROUTES.private.home,
+    label: 'Tarefas',
+    icon: HomeIcon,
+  },
 
   {
+    ...ROUTES.private.admin,
+    label: 'Administrador',
+    icon: LockKeyholeIcon,
+  },
+
+  {
+    ...ROUTES.private.settings,
     label: 'Configurações',
-    href: ROUTES.private.settings.path,
     icon: SettingsIcon,
   },
 ];
@@ -75,21 +86,25 @@ export function MainSidebar({ user }: MainSidebarProps) {
         <DefaultSidebarNav>
           <DefaultSidebarNavGroup>
             <ScrollArea className="max-h-[40vh]">
-              {links.map((link) => (
-                <DefaultSidebarNavItem
-                  onClick={() => setIsDefaultSidebarOpen(false)}
-                  key={link.href}
-                  href={link.href}
-                  icon={<link.icon className="size-4" />}
-                  isActive={isPathActive({
-                    activePath: pathname,
-                    path: link.href,
-                    mode: 'startsWith',
-                  })}
-                >
-                  {link.label}
-                </DefaultSidebarNavItem>
-              ))}
+              {links
+                .filter(
+                  (link) => isAdmin(user) || hasSomeRoles(user, ...link.roles),
+                )
+                .map((link) => (
+                  <DefaultSidebarNavItem
+                    onClick={() => setIsDefaultSidebarOpen(false)}
+                    key={link.path}
+                    href={link.path}
+                    icon={<link.icon className="size-4" />}
+                    isActive={isPathActive({
+                      activePath: pathname,
+                      path: link.path,
+                      mode: 'startsWith',
+                    })}
+                  >
+                    {link.label}
+                  </DefaultSidebarNavItem>
+                ))}
             </ScrollArea>
           </DefaultSidebarNavGroup>
 

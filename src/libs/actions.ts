@@ -8,6 +8,8 @@ import { z } from 'zod';
 import { auth } from '$libs/auth';
 import { errorToJson } from '$utils/handle-error';
 
+import { hasAllRoles, hasSomeRoles, isAdmin, UserRole } from './auth/roles';
+
 export interface Action<S = any, R = any> {
   id: string;
   schema: z.ZodSchema;
@@ -21,6 +23,12 @@ export interface HandlerParams<S, C extends object> {
   context: C;
 }
 
+export interface CreateActionAuthorization {
+  mode?: 'some' | 'all';
+  roles: UserRole[];
+  bypassWhenIsAdmin?: boolean;
+}
+
 export interface CreateActionParams<
   S,
   R,
@@ -30,8 +38,14 @@ export interface CreateActionParams<
   id: string;
   schema: z.ZodSchema<S>;
   revalidate?: true | string;
-  handler: (params: P extends true ? HandlerParams<S, C> : S) => Promise<R>;
+  handler: (
+    params: P extends true
+      ? HandlerParams<S, C>
+      : Omit<HandlerParams<S, C>, 'context'>,
+  ) => Promise<R>;
   withContext?: P;
+
+  authorization?: CreateActionAuthorization;
 }
 
 export interface ActionClientOptions {
@@ -60,13 +74,27 @@ class ActionsClient {
     return action as Action<S, R>;
   }
 
-  createAction<S, R, P extends boolean = true>({
-    id,
-    schema,
-    handler,
-    revalidate,
-    withContext = true as P,
-  }: CreateActionParams<S, R, Awaited<ReturnType<typeof this.getContext>>, P>) {
+  createAction<S, R, P extends boolean = true>(
+    actionParams: P extends true
+      ? CreateActionParams<S, R, Awaited<ReturnType<typeof this.getContext>>, P>
+      : Omit<
+          CreateActionParams<
+            S,
+            R,
+            Awaited<ReturnType<typeof this.getContext>>,
+            P
+          >,
+          'authorization'
+        >,
+  ) {
+    const {
+      id,
+      schema,
+      handler,
+      revalidate,
+      withContext = true as P,
+    } = actionParams;
+
     let user: Session['user'] | undefined;
 
     const actionAlreadyExists = this.actions.some((action) => action.id === id);
@@ -84,7 +112,14 @@ class ActionsClient {
         let result: R;
 
         if (withContext) {
-          const context = await this.getContext();
+          const { authorization } = actionParams as CreateActionParams<
+            S,
+            R,
+            Awaited<ReturnType<typeof this.getContext>>,
+            P
+          >;
+
+          const context = await this.getContext(authorization);
 
           user = context.user;
 
@@ -158,15 +193,35 @@ class ActionsClient {
       .or(z.void().optional());
   }
 
-  private async getContext() {
+  private async getContext(
+    authorization: CreateActionAuthorization = { roles: [] },
+  ) {
     const session = await auth();
 
     if (!session || !session.user || !session.user.id || !session.user.email) {
       throw new Error('Usuário não autenticado');
     }
 
+    const user = session.user;
+
+    authorization.mode = authorization.mode ?? 'some';
+
+    authorization.bypassWhenIsAdmin = authorization.bypassWhenIsAdmin ?? true;
+
+    const hasRoles = authorization.mode === 'some' ? hasSomeRoles : hasAllRoles;
+
+    const allowUser =
+      authorization.roles.length === 0 ||
+      hasRoles(user, ...authorization.roles) ||
+      (authorization.bypassWhenIsAdmin && isAdmin(user));
+
+    if (!allowUser) {
+      throw new Error('Acesso proibido');
+    }
+
     return {
-      user: session.user,
+      user,
+      authorization,
     };
   }
 }
