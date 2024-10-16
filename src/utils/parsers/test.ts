@@ -10,8 +10,11 @@ describe('parsers', () => {
       expect(parseNumber('R$3,1415', 0)).toBe(3.1415);
     });
 
-    test('deve retornar um valor padrão caso não seja possível converter o número', () => {
+    test('deve retornar um valor padrão caso não seja finito', () => {
       expect(parseNumber('NaN', 10)).toBe(10);
+      expect(parseNumber('Infinity', 10)).toBe(10);
+      expect(parseNumber(Infinity, 10)).toBe(10);
+
       expect(parseNumber('', 0.1)).toBe(0.1);
       expect(parseNumber(null, 15.5)).toBe(15.5);
       expect(parseNumber(undefined, 1234.56)).toBe(1234.56);

@@ -12,9 +12,9 @@ export function parseNumber(
     String(number).replaceAll('R$', '').replaceAll(',', '.') || defaultValue,
   );
 
-  if (Number.isNaN(parsed)) {
-    return defaultValue;
+  if (Number.isFinite(parsed)) {
+    return parsed;
   }
 
-  return parsed;
+  return defaultValue;
 }
