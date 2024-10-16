@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -30,7 +31,14 @@ export interface ApiRoute {
 
 export interface ApiClientOptions {
   afterRouteExecute?: (params: {
-    route: { id: string; method: ApiRoute['method']; data: unknown };
+    route: {
+      id: string;
+      method: ApiRoute['method'];
+      path: string;
+      data: unknown;
+    };
+
+    user?: Session['user'];
     error: unknown | null;
   }) => void;
 }
@@ -81,7 +89,8 @@ class ApiClient {
           return httpResponses.unauthorized();
         } finally {
           this.afterRouteExecute?.({
-            route: { id, method: 'GET', data: user },
+            route: { id, method: 'GET', path: request.url, data },
+            user,
             error: ocurredError,
           });
         }
@@ -109,7 +118,8 @@ class ApiClient {
         return httpResponses.badRequest(errorMessage);
       } finally {
         this.afterRouteExecute?.({
-          route: { id, method: 'GET', data: { user, data, path: request.url } },
+          route: { id, method: 'GET', path: request.url, data },
+          user,
           error: ocurredError,
         });
       }
@@ -122,10 +132,14 @@ class ApiClient {
 }
 
 export const apiClient = new ApiClient({
-  afterRouteExecute: async ({ route, error }) => {
+  afterRouteExecute: async ({ route, error, user }) => {
     if (error) {
+      Sentry.captureException(error, {
+        user: { id: user?.id, email: user?.email, username: user?.name || '' },
+      });
+
       console.error(
-        `Erro ao executar rota ${route.id} com o método ${route.method}\n`,
+        `Erro ao executar rota com id ${route.id} e método ${route.method} no caminho ${route.path}\n`,
         error,
       );
     }

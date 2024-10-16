@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import * as Sentry from '@sentry/nextjs';
+import { Session } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
@@ -35,6 +37,7 @@ export interface CreateActionParams<
 export interface ActionClientOptions {
   afterActionExecute?: (params: {
     action: { id: string; data: unknown };
+    user?: Session['user'];
     error: unknown | null;
   }) => void;
 }
@@ -64,6 +67,8 @@ class ActionsClient {
     revalidate,
     withContext = true as P,
   }: CreateActionParams<S, R, Awaited<ReturnType<typeof this.getContext>>, P>) {
+    let user: Session['user'] | undefined;
+
     const actionAlreadyExists = this.actions.some((action) => action.id === id);
 
     if (actionAlreadyExists) {
@@ -80,6 +85,8 @@ class ActionsClient {
 
         if (withContext) {
           const context = await this.getContext();
+
+          user = context.user;
 
           result = await handler({ data, context } as any);
         } else {
@@ -124,6 +131,7 @@ class ActionsClient {
         this.afterActionExecute?.({
           action: { id, data },
           error: ocurredError,
+          user,
         });
       }
     };
@@ -164,9 +172,13 @@ class ActionsClient {
 }
 
 export const actionsClient = new ActionsClient({
-  afterActionExecute: async ({ action, error }) => {
+  afterActionExecute: async ({ action, error, user }) => {
     if (error) {
-      console.error(`Erro ao executar action ${action.id}`, error);
+      Sentry.captureException(error, {
+        user: { id: user?.id, email: user?.email, username: user?.name || '' },
+      });
+
+      console.error(`Erro ao executar action ${action.id}\n`, error);
     }
   },
 });

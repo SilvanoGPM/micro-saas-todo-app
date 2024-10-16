@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 
 import { ActionError } from '$libs/errors/action-error';
@@ -21,8 +22,6 @@ export function handleError(
         error?.response?.data?.error ||
         error?.message ||
         defaultMessage;
-
-  console.error(error, description);
 
   const is422Error = error?.response?.status === 422;
   const is500Error = error?.response?.status === 500;
@@ -57,8 +56,21 @@ export function handleError(
     description = defaultMessage;
   }
 
+  if (method === 'error') {
+    console.error(error, description);
+  } else if (method === 'warning') {
+    console.warn(error, description);
+  }
+
   toast[method](`Aconteceu um ${method === 'error' ? 'erro' : 'problema'}`, {
     description,
+  });
+
+  Sentry.captureException(error, {
+    data: {
+      description,
+      method,
+    },
   });
 }
 
