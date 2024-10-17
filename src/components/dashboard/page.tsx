@@ -32,7 +32,7 @@ export function DefaultPageHeader({ children, className }: DefaultPageProps) {
   return (
     <header
       className={cn(
-        'h-20 px-4 pt-6 pb-0 lg:pb-6 lg:border-b flex flex-col justify-center',
+        'h-20 px-4 pt-6 pb-0 lg:pb-6 lg:border-b flex items-center gap-2',
         className,
       )}
     >

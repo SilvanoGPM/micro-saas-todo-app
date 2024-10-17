@@ -15,6 +15,11 @@ export const ROUTES = {
       roles: [UserRoleEnum.USER],
     },
 
+    todoNote: {
+      path: '/tarefas/[id]/notas',
+      roles: [UserRoleEnum.USER],
+    },
+
     users: {
       path: '/usuarios',
       roles: [UserRoleEnum.ADMIN],
@@ -59,17 +64,15 @@ export function getPrivatePathRoles(path: string): UserRoleEnum[] {
       const routeParts = route.path.split('/').filter(Boolean);
 
       const isSameLength = routeParts.length === pathParts.length;
-      const isSameStart = routeParts[0] === pathParts[0];
 
-      if (isSameLength && isSameStart) {
-        const isOdd = pathParts.length % 2 !== 0;
-
-        // Se for uma rota com partes impares, a última parte deve ser igual.
-        if (isOdd) {
-          return (
-            routeParts[routeParts.length - 1] ===
-            pathParts[pathParts.length - 1]
-          );
+      if (isSameLength) {
+        for (let i = 0; i < routeParts.length; i++) {
+          if (
+            routeParts[i] !== pathParts[i] &&
+            !routeParts[i].startsWith('[')
+          ) {
+            return false;
+          }
         }
 
         return true;

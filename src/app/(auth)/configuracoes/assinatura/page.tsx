@@ -65,23 +65,25 @@ export default async function SettingsBillingPage() {
         )}
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Status da assinatura</CardTitle>
-        </CardHeader>
-
-        <CardContent className="border-y pt-6">
-          <div className="flex gap-2 items-center">
-            <span>Seu status:</span>
-            <OpaqueBadge className="w-fit px-4" color={ptBrStatus.color}>
-              {ptBrStatus.label}
-            </OpaqueBadge>
-          </div>
-        </CardContent>
-      </Card>
-
       {!STRIPE_PLANS.free.isFree(planDetails.stripePriceId) && (
-        <CancelSubscription user={user} />
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>Status da assinatura</CardTitle>
+            </CardHeader>
+
+            <CardContent className="border-y pt-6">
+              <div className="flex gap-2 items-center">
+                <span>Seu status:</span>
+                <OpaqueBadge className="w-fit px-4" color={ptBrStatus.color}>
+                  {ptBrStatus.label}
+                </OpaqueBadge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <CancelSubscription user={user} />
+        </>
       )}
     </div>
   );

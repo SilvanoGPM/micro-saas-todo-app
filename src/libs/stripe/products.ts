@@ -46,7 +46,7 @@ export const STRIPE_PLANS = {
       tasks: 5,
     },
 
-    isFree(priceId: string) {
+    isFree(priceId?: string | null) {
       return this.priceId === priceId;
     },
 

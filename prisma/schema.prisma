@@ -52,12 +52,13 @@ model User {
   stripeSubscriptionStatus String?
   stripePriceId            String?
   stripeUpgradedAt         DateTime?
-  accounts                 Account[]
-  sessions                 Session[]
-  Todo                     Todo[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  accounts Account[]
+  sessions Session[]
+  Todo     Todo[]
 
   @@map("users")
 }
@@ -71,16 +72,17 @@ model VerificationToken {
 }
 
 model Todo {
-  id          String    @id @default(cuid())
-  title       String
-  description String?
-  completedAt DateTime? @map("completed_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  userId      String    @map("user_id")
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                          String    @id @default(cuid())
+  title                       String
+  description                 String?
+  completedAt                 DateTime? @map("completed_at")
+  createdAt                   DateTime  @default(now()) @map("created_at")
+  updatedAt                   DateTime  @updatedAt @map("updated_at")
+  notes                       String?   @db.Text @default("")
+  blockWhenCancelSubscription Boolean?  @default(false) @map("block_when_cancel_subscription")
 
-  blockWhenCancelSubscription Boolean? @default(false) @map("block_when_cancel_subscription")
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId], map: "todos_user_id_fkey")
   @@map("todos")

@@ -9,10 +9,12 @@ import {
   EditIcon,
   Loader2Icon,
   MoreHorizontal,
+  NotebookIcon,
   TrashIcon,
 } from 'lucide-react';
 import { Session } from 'next-auth';
 import { memo, useTransition } from 'react';
+import Link from 'next/link';
 
 import { Badge, BadgeProps } from '$components/ui/badge';
 import { Button } from '$components/ui/button';
@@ -36,6 +38,7 @@ import { HTTP_KEYS } from '$config';
 import { Todo } from '$http/todos';
 import { handleAction } from '$utils/handle-action';
 import { handleError } from '$utils/handle-error';
+import { ROUTES } from '$libs/auth/routes';
 
 import { toggleCompletedAtTodoAction } from './actions';
 
@@ -208,6 +211,22 @@ function ActionsCell({
           {!disabledRows.includes(row.original.id) && (
             <>
               <DropdownMenuLabel>Ações</DropdownMenuLabel>
+
+              <DropdownMenuItem disabled={isPending} asChild>
+                <Link
+                  href={ROUTES.private.todoNote.path.replace(
+                    '[id]',
+                    row.original.id,
+                  )}
+                >
+                  {isPending ? (
+                    <Loader2Icon className="animate-spin mr-2 size-3" />
+                  ) : (
+                    <NotebookIcon className="mr-2 size-3" />
+                  )}
+                  Anotações
+                </Link>
+              </DropdownMenuItem>
 
               <DropdownMenuItem
                 onClick={handleToggleCompletedAt}
