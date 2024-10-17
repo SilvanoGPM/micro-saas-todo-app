@@ -1,6 +1,11 @@
 'use client';
 
-import { HomeIcon, SettingsIcon, Users2Icon } from 'lucide-react';
+import {
+  CircleFadingArrowUpIcon,
+  HomeIcon,
+  SettingsIcon,
+  Users2Icon,
+} from 'lucide-react';
 import { Session } from 'next-auth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -25,6 +30,8 @@ import { hasSomeRoles, isAdmin } from '$libs/auth/roles';
 import { ROUTES } from '$libs/auth/routes';
 import { useUIStore } from '$stores/ui';
 import { isPathActive } from '$utils/is-path-active';
+import { Button } from '$components/ui/button';
+import { STRIPE_PLANS } from '$libs/stripe/products';
 
 import { UserInfoDropdown } from './user-info-dropdown';
 
@@ -115,6 +122,15 @@ export function MainSidebar({ user }: MainSidebarProps) {
             <DefaultSidebarNavItem href="#">Ajuda</DefaultSidebarNavItem>
             <DefaultSidebarNavItem href="#">Documentação</DefaultSidebarNavItem>
           </DefaultSidebarNavGroup>
+
+          {STRIPE_PLANS.free.isFree(user.stripePriceId || '') && (
+            <Button asChild>
+              <Link href={ROUTES.private.billing.path}>
+                <CircleFadingArrowUpIcon className="size-4 mr-2" />
+                Atualizar Plano
+              </Link>
+            </Button>
+          )}
         </DefaultSidebarNav>
 
         <DefaultSidebarFooter>

@@ -73,6 +73,7 @@ export async function getUserPlanDetails(userId?: string) {
     where: { id: userId },
     select: {
       stripePriceId: true,
+      stripeSubscriptionStatus: true,
     },
   });
 
@@ -88,6 +89,7 @@ export async function getUserPlanDetails(userId?: string) {
 
   return {
     stripePriceId: user.stripePriceId,
+    stripeSubscriptionStatus: user.stripeSubscriptionStatus,
 
     name: plan.name,
     price: plan.price,

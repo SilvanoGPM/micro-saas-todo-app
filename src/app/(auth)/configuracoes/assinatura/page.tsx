@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 
+import { OpaqueBadge } from '$components/opaque-badge';
 import { SubscribeButton } from '$components/subscribe-button';
 import {
   Card,
@@ -15,6 +16,7 @@ import { formatPrice } from '$utils/formatters';
 
 import { CancelSubscription } from './_components/cancel-subscription';
 import { QuotaUsed } from './_components/quota-used';
+import { ptBrStripeSubscriptionStatus } from './ptbr-status';
 
 export const metadata: Metadata = {
   title: 'Assinatura',
@@ -23,6 +25,11 @@ export const metadata: Metadata = {
 export default async function SettingsBillingPage() {
   const user = await getCurrentUser();
   const planDetails = await getUserPlanDetails(user.id);
+
+  const ptBrStatus =
+    ptBrStripeSubscriptionStatus[
+      planDetails.stripeSubscriptionStatus as keyof typeof ptBrStripeSubscriptionStatus
+    ];
 
   return (
     <div className="flex flex-col gap-8">
@@ -56,6 +63,21 @@ export default async function SettingsBillingPage() {
             </SubscribeButton>
           </CardFooter>
         )}
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Status da assinatura</CardTitle>
+        </CardHeader>
+
+        <CardContent className="border-y pt-6">
+          <div className="flex gap-2 items-center">
+            <span>Seu status:</span>
+            <OpaqueBadge className="w-fit px-4" color={ptBrStatus.color}>
+              {ptBrStatus.label}
+            </OpaqueBadge>
+          </div>
+        </CardContent>
       </Card>
 
       {!STRIPE_PLANS.free.isFree(planDetails.stripePriceId) && (

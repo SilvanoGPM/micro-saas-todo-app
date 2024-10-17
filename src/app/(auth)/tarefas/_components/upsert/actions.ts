@@ -63,6 +63,14 @@ export const upsertTodoAction = actionsClient.createAction({
       };
     }
 
+    if (planDetails.stripeSubscriptionStatus !== 'active') {
+      return {
+        status: 'warning',
+        error:
+          'Você não pode criar tarefas enquanto sua assinatura não estiver ativa.',
+      };
+    }
+
     await prisma.todo.create({
       data: {
         title: data.title,
