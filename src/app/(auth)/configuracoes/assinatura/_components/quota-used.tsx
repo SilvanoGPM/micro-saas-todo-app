@@ -36,7 +36,7 @@ export function QuotaUsed({
         <span>{percentageFormatter.format(usage)}</span>
       </div>
 
-      <Progress value={usage * 100} />
+      <Progress value={Math.min(usage * 100, 100)} />
     </div>
   );
 }

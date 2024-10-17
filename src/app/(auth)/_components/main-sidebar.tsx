@@ -70,7 +70,7 @@ export function MainSidebar({ user }: MainSidebarProps) {
         <DefaultSidebarMobileButton onOpenChange={setIsDefaultSidebarOpen} />
       </DefaultSidebarMobileHeader>
 
-      <div className="lg:w-full lg:max-w-[300px]" />
+      <div className="lg:min-w-[300px] lg:max-w-[300px] lg:w-full" />
 
       <DefaultSidebar
         isOpen={isDefaultSidebarOpen}

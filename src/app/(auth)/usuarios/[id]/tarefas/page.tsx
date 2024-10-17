@@ -8,7 +8,7 @@ import { TodosTable } from '$components/dashboard/todos/table';
 import { getCurrentUser } from '$libs/auth/get-current-user';
 import { getFirstString } from '$utils/strings';
 
-import { getUserName } from './actions';
+import { getUserDetails } from './actions';
 
 export default async function UserTodosPage({
   params,
@@ -16,18 +16,25 @@ export default async function UserTodosPage({
   params: { id: string };
 }) {
   const user = await getCurrentUser();
-  const userName = await getUserName(params.id);
+  const userDetails = await getUserDetails(params.id);
 
   return (
     <DefaultPage>
       <DefaultPageHeader>
         <DefaultPageTitle>
-          Tarefas de {getFirstString(userName)}
+          Tarefas de{' '}
+          {getFirstString(userDetails.name || userDetails.email || params.id)}
         </DefaultPageTitle>
       </DefaultPageHeader>
 
       <DefaultPageSection>
-        <TodosTable user={user} userId={params.id} />
+        <TodosTable
+          user={user}
+          todosDetails={{
+            userId: params.id,
+            userStripePriceId: userDetails.stripePriceId,
+          }}
+        />
       </DefaultPageSection>
     </DefaultPage>
   );

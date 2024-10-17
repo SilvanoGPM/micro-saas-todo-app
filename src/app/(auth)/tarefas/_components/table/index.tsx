@@ -33,6 +33,7 @@ export function MainTodosTable({ user }: MainTodosTableProps) {
     <>
       <TodosTable
         user={user}
+        todosDetails={{ userStripePriceId: user.stripePriceId }}
         onEdit={setTodoToEdit}
         onDelete={setTodoToDelete}
         actionButton={

@@ -13,6 +13,10 @@ export const GET = apiClient.createGetRoute({
         id: pathParams.id,
         userId: user.id,
       },
+
+      include: {
+        user: { select: { id: true } },
+      },
     });
 
     if (!todo) {

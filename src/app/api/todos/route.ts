@@ -2,8 +2,9 @@ import { Prisma } from '@prisma/client';
 
 import { HTTP_KEYS } from '$config';
 import { apiClient } from '$libs/api';
-import { byFieldsContaining, getPrismaPagination, prisma } from '$libs/prisma';
 import { isAdmin } from '$libs/auth/roles';
+import { byFieldsContaining, getPrismaPagination, prisma } from '$libs/prisma';
+import { STRIPE_PLANS } from '$libs/stripe/products';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,10 +21,16 @@ export const GET = apiClient.createGetRoute({
       userId,
     };
 
+    const orderBy = STRIPE_PLANS.free.isFree(
+      searchParams.get('userStripePriceId') || '',
+    )
+      ? [{ blockWhenCancelSubscription: 'asc' as const }, searchParams.sort]
+      : [searchParams.sort];
+
     const [data, total] = await Promise.all([
       prisma.todo.findMany({
         ...getPrismaPagination(searchParams.page, searchParams.size),
-        orderBy: searchParams.sort,
+        orderBy,
         where,
 
         include: {

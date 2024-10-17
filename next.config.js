@@ -4,6 +4,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
+
 const withPWA = require('next-pwa')({
   dest: 'public',
   disable: !isProduction,
@@ -39,7 +40,7 @@ module.exports = withBundleAnalyzer(
 
 const { withSentryConfig } = require('@sentry/nextjs');
 
-module.exports = withSentryConfig(module.exports, {
+const sentryConfig = withSentryConfig(module.exports, {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
@@ -78,3 +79,11 @@ module.exports = withSentryConfig(module.exports, {
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: true,
 });
+
+module.exports = {
+  ...sentryConfig,
+
+  experimental: {
+    instrumentationHook: process.env.NODE_ENV === 'production',
+  },
+};

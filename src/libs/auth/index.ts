@@ -59,6 +59,7 @@ export const authOptions = NextAuth({
         email: dbUser.email || token.email,
         image: dbUser.image || token.image,
         roles: dbUser.roles || token.roles,
+        stripePriceId: dbUser.stripePriceId || token.stripePriceId,
       };
     },
   },

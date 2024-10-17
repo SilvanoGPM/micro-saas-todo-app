@@ -4,10 +4,10 @@ import { ROUTES } from '$libs/auth/routes';
 import { prisma } from '$libs/prisma';
 import { redirectWithFlashMessage } from '$utils/flash-messages';
 
-export async function getUserName(id: string) {
+export async function getUserDetails(id: string) {
   const user = await prisma.user.findUnique({
     where: { id },
-    select: { name: true, email: true },
+    select: { name: true, email: true, stripePriceId: true },
   });
 
   if (!user?.email) {
@@ -17,5 +17,5 @@ export async function getUserName(id: string) {
     });
   }
 
-  return user.name || user.email;
+  return user;
 }

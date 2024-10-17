@@ -2,7 +2,7 @@
 
 import { actionsClient } from '$libs/actions';
 import { prisma } from '$libs/prisma';
-import { getUserPlanDetails } from '$libs/stripe/products';
+import { getUserPlanDetails, STRIPE_PLANS } from '$libs/stripe/products';
 
 import { upsertTodoSchema } from './schema';
 
@@ -18,15 +18,30 @@ export const upsertTodoAction = actionsClient.createAction({
           id: data.id,
           userId: context.user.id,
         },
+        select: {
+          blockWhenCancelSubscription: true,
+        },
       });
 
       if (!todo) {
         return { error: 'Tarefa não encontrada.' };
       }
 
+      if (todo.blockWhenCancelSubscription) {
+        const planDetails = await getUserPlanDetails(context.user.id);
+
+        if (STRIPE_PLANS.free.isFree(planDetails.stripePriceId)) {
+          return {
+            status: 'warning',
+            error:
+              'Você não pode editar tarefas criadas enquanto você tinha uma assinatura.',
+          };
+        }
+      }
+
       await prisma.todo.update({
         where: {
-          id: todo.id,
+          id: data.id,
         },
         data: {
           title: data.title,
@@ -54,6 +69,8 @@ export const upsertTodoAction = actionsClient.createAction({
         description: data.description,
         completedAt: data.completedAt,
         userId: context.user.id,
+        blockWhenCancelSubscription:
+          planDetails.quota.tasks.current >= STRIPE_PLANS.free.quota.tasks,
       },
     });
   },

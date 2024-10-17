@@ -29,7 +29,7 @@ export function DefaultSidebar({
   children,
   isOpen,
   onOpenChange,
-  mobileSheet = false,
+  mobileSheet = true,
 }: DefaultSidebarProps) {
   return (
     <>

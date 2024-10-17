@@ -57,7 +57,7 @@ model User {
   Todo                     Todo[]
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@map("users")
 }
@@ -79,6 +79,8 @@ model Todo {
   updatedAt   DateTime  @updatedAt @map("updated_at")
   userId      String    @map("user_id")
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  blockWhenCancelSubscription Boolean? @default(false) @map("block_when_cancel_subscription")
 
   @@index([userId], map: "todos_user_id_fkey")
   @@map("todos")

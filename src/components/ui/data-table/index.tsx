@@ -3,13 +3,13 @@
 import {
   ColumnDef,
   ColumnFiltersState,
-  SortingState,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  SortingState,
   useReactTable,
+  VisibilityState,
 } from '@tanstack/react-table';
 import { DownloadIcon, RotateCwIcon, SearchIcon } from 'lucide-react';
 import {
@@ -39,6 +39,7 @@ import {
   getCommonPinningStyles,
   SORT_SEPARATOR,
 } from '$libs/react-table';
+import { cn } from '$utils/cn';
 
 import { BodySkeleton } from './body-skeleton';
 import { ColumnsVisibility } from './columns-visibility';
@@ -55,6 +56,7 @@ export interface DataTableProps<TData extends object, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data?: TData[] | null;
   total?: number;
+  disabledRows?: string[];
   rowsSelectedActions?: Array<(params: { data: TData[] }) => ReactNode>;
   actionButton?: ReactNode;
   initialColumnVisibility?: VisibilityState;
@@ -70,6 +72,7 @@ export function DataTable<TData extends object, TValue>({
   isFetching = false,
   showSelectedRegisters = true,
   data = [],
+  disabledRows = [],
   total = 0,
   actionButton,
   rowsSelectedActions = [],
@@ -156,7 +159,7 @@ export function DataTable<TData extends object, TValue>({
   }, [search]);
 
   return (
-    <div className="w-full">
+    <div className="flex-1 w-full">
       <div className="flex flex-col-reverse lg:flex-row items-center justify-start gap-4 md:gap-2 py-4">
         <div className="flex-1 w-full flex gap-2 lg:w-auto">
           <div className="relative w-full">
@@ -275,28 +278,40 @@ export function DataTable<TData extends object, TValue>({
             {!isLoading ? (
               <>
                 {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-id={'id' in row.original && row.original.id}
-                      data-state={row.getIsSelected() && 'selected'}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell
-                          key={cell.id}
-                          className="whitespace-nowrap"
-                          style={{
-                            ...getCommonPinningStyles({ column: cell.column }),
-                          }}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
+                  table.getRowModel().rows.map((row) => {
+                    const id = ('id' in row.original &&
+                      row.original.id) as string;
+
+                    const isDisabled = disabledRows.includes(id);
+
+                    return (
+                      <TableRow
+                        key={row.id}
+                        data-id={id}
+                        data-state={row.getIsSelected() && 'selected'}
+                        className={cn({
+                          'opacity-50': isDisabled,
+                        })}
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell
+                            key={cell.id}
+                            className="whitespace-nowrap"
+                            style={{
+                              ...getCommonPinningStyles({
+                                column: cell.column,
+                              }),
+                            }}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    );
+                  })
                 ) : (
                   <TableRow>
                     <TableCell

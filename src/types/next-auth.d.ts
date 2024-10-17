@@ -8,6 +8,7 @@ declare module 'next-auth' {
       email: string;
       image: string;
       roles: string;
+      stripePriceId?: string | null;
     };
   }
 }
@@ -19,5 +20,6 @@ declare module 'next-auth/jwt' {
     email: string;
     image: string;
     roles: string;
+    stripePriceId?: string | null;
   }
 }

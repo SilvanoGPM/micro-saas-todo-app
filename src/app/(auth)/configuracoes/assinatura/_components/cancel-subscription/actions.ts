@@ -31,9 +31,7 @@ export async function getItensToDisable(userId: string) {
   const todos = await prisma.todo.count({
     where: {
       userId,
-      createdAt: {
-        gte: user.stripeUpgradedAt,
-      },
+      blockWhenCancelSubscription: true,
     },
   });
 

@@ -14,7 +14,7 @@ import {
 import { Session } from 'next-auth';
 import { memo, useTransition } from 'react';
 
-import { Badge } from '$components/ui/badge';
+import { Badge, BadgeProps } from '$components/ui/badge';
 import { Button } from '$components/ui/button';
 import { Checkbox } from '$components/ui/checkbox';
 import { DataTableColumnHeader } from '$components/ui/data-table/column-header';
@@ -41,6 +41,7 @@ import { toggleCompletedAtTodoAction } from './actions';
 
 interface GetColumnsParams {
   user: Session['user'];
+  disabledRows: string[];
   setTodoToEdit?: (id: string) => void;
   setTodoToDelete?: (id: string) => void;
 }
@@ -80,22 +81,29 @@ export const getColumns = (props: GetColumnsParams) =>
         label: 'Status',
       },
       cell: ({ row }) => {
-        const { variant, text, message } = row.original.completedAt
+        let { variant, text, message } = row.original.completedAt
           ? {
-              variant: 'outline' as const,
+              variant: 'outline',
               text: 'Concluído',
               message: `Tarefa completada em ${row.original.completedAt}`,
             }
           : {
-              variant: 'secondary' as const,
+              variant: 'secondary',
               text: 'Pendente',
               message: 'Tarefa ainda não foi completada',
             };
 
+        if (props.disabledRows.includes(row.original.id)) {
+          variant = 'destructive' as const;
+          text = 'Bloqueada';
+          message =
+            'Tarefa bloqueada pois foi criada enquanto se tinha uma assinatura';
+        }
+
         return (
           <Tooltip delayDuration={100}>
             <TooltipTrigger>
-              <Badge variant={variant}>{text}</Badge>
+              <Badge variant={variant as BadgeProps['variant']}>{text}</Badge>
             </TooltipTrigger>
 
             <Portal>
@@ -156,6 +164,7 @@ const MemoizedActionsCell = memo(ActionsCell);
 function ActionsCell({
   row,
   user,
+  disabledRows,
   setTodoToDelete,
   setTodoToEdit,
 }: ActionsCellProps) {
@@ -196,49 +205,54 @@ function ActionsCell({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Ações</DropdownMenuLabel>
+          {!disabledRows.includes(row.original.id) && (
+            <>
+              <DropdownMenuLabel>Ações</DropdownMenuLabel>
 
-          <DropdownMenuItem
-            onClick={handleToggleCompletedAt}
-            disabled={user.id !== row.original.user.id || isPending}
-          >
-            {isPending ? (
-              <Loader2Icon className="animate-spin mr-2 size-3" />
-            ) : (
-              <CheckCheckIcon className="mr-2 size-3" />
-            )}
+              <DropdownMenuItem
+                onClick={handleToggleCompletedAt}
+                disabled={user.id !== row.original.user.id || isPending}
+              >
+                {isPending ? (
+                  <Loader2Icon className="animate-spin mr-2 size-3" />
+                ) : (
+                  <CheckCheckIcon className="mr-2 size-3" />
+                )}
 
-            {item.completedAt
-              ? 'Marcar como pendente'
-              : 'Marcar como concluído'}
-          </DropdownMenuItem>
+                {item.completedAt
+                  ? 'Marcar como pendente'
+                  : 'Marcar como concluído'}
+              </DropdownMenuItem>
 
-          <DropdownMenuItem
-            onClick={() => setTodoToEdit?.(item.id)}
-            disabled={!setTodoToEdit || isPending}
-          >
-            {isPending ? (
-              <Loader2Icon className="animate-spin mr-2 size-3" />
-            ) : (
-              <EditIcon className="mr-2 size-3" />
-            )}
-            Editar
-          </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setTodoToEdit?.(item.id)}
+                disabled={!setTodoToEdit || isPending}
+              >
+                {isPending ? (
+                  <Loader2Icon className="animate-spin mr-2 size-3" />
+                ) : (
+                  <EditIcon className="mr-2 size-3" />
+                )}
+                Editar
+              </DropdownMenuItem>
 
-          <DropdownMenuItem
-            className="text-destructive"
-            onClick={() => setTodoToDelete?.(item.id)}
-            disabled={!setTodoToDelete || isPending}
-          >
-            {isPending ? (
-              <Loader2Icon className="animate-spin mr-2 size-3" />
-            ) : (
-              <TrashIcon className="mr-2 size-3" />
-            )}
-            Remover
-          </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-destructive"
+                onClick={() => setTodoToDelete?.(item.id)}
+                disabled={!setTodoToDelete || isPending}
+              >
+                {isPending ? (
+                  <Loader2Icon className="animate-spin mr-2 size-3" />
+                ) : (
+                  <TrashIcon className="mr-2 size-3" />
+                )}
+                Remover
+              </DropdownMenuItem>
 
-          <DropdownMenuSeparator />
+              <DropdownMenuSeparator />
+            </>
+          )}
+
           <DropdownMenuLabel>Copiar</DropdownMenuLabel>
 
           <DropdownMenuItem

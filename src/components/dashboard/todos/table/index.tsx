@@ -8,19 +8,24 @@ import { DataTable } from '$components/ui/data-table';
 import { useTableQueryParams } from '$components/ui/data-table/use-table-query-params';
 import { HTTP_KEYS } from '$config';
 import { useGetTodos } from '$http/todos';
+import { STRIPE_PLANS } from '$libs/stripe/products';
 
 import { getColumns } from './columns';
 
 export interface TodosTableProps {
   user: Session['user'];
-  userId?: string;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
   actionButton?: ReactNode;
+
+  todosDetails?: {
+    userId?: string;
+    userStripePriceId?: string | null;
+  };
 }
 
 export function TodosTable({
-  userId,
+  todosDetails,
   user,
   onEdit,
   onDelete,
@@ -31,7 +36,8 @@ export function TodosTable({
   const queryClient = useQueryClient();
 
   const usersQuery = useGetTodos({
-    userId,
+    userId: todosDetails?.userId,
+    userStripePriceId: todosDetails?.userStripePriceId,
     search,
     size,
     page,
@@ -44,16 +50,30 @@ export function TodosTable({
     resetTableParams();
   }
 
+  const disabledRows = useMemo(() => {
+    return STRIPE_PLANS.free.isFree(todosDetails?.userStripePriceId || '')
+      ? usersQuery?.data?.data
+          .filter((todo) => todo.blockWhenCancelSubscription)
+          .map((todo) => todo.id) || []
+      : [];
+  }, [usersQuery, todosDetails?.userStripePriceId]);
+
   const columns = useMemo(
     () =>
-      getColumns({ user, setTodoToEdit: onEdit, setTodoToDelete: onDelete }),
-    [user, onEdit, onDelete],
+      getColumns({
+        user,
+        disabledRows,
+        setTodoToEdit: onEdit,
+        setTodoToDelete: onDelete,
+      }),
+    [user, disabledRows, onEdit, onDelete],
   );
 
   return (
     <>
       <DataTable
         tableName="Tarefas"
+        disabledRows={disabledRows}
         onRefresh={handleRefresh}
         columns={columns}
         isLoading={usersQuery.isLoading}

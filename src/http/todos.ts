@@ -11,15 +11,17 @@ import { BaseEntity, GetParams, MappedEntity, Page } from './types';
 export interface HttpTodo extends BaseEntity {
   id: string;
   title: string;
-  user: { id: string };
+  blockWhenCancelSubscription: boolean;
   description: string | null;
   completedAt: string | null;
+  user: { id: string };
 }
 
 export type Todo = MappedEntity<HttpTodo>;
 
 export interface GetTodosParams extends GetParams {
   userId?: string;
+  userStripePriceId?: string | null;
 }
 
 export const TODOS_PATH = '/todos';

@@ -9,7 +9,12 @@ export interface DefaultPageProps {
 
 export function DefaultPage({ children, className }: DefaultPageProps) {
   return (
-    <main className={cn('h-full flex-1 flex flex-col', className)}>
+    <main
+      className={cn(
+        'overflow-auto h-full max-w-full flex-1 flex flex-col',
+        className,
+      )}
+    >
       {children}
     </main>
   );
