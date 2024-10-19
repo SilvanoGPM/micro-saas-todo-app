@@ -60,6 +60,7 @@ export const authOptions = NextAuth({
         image: dbUser.image || token.image,
         roles: dbUser.roles || token.roles,
         stripePriceId: dbUser.stripePriceId || token.stripePriceId,
+        stripeNotesPaid: dbUser.stripeNotesPaid,
       };
     },
   },

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
+import { SubscribeButton } from '$components/dashboard/subscribe-button';
 import { OpaqueBadge } from '$components/opaque-badge';
-import { SubscribeButton } from '$components/subscribe-button';
 import {
   Card,
   CardContent,
@@ -15,6 +15,7 @@ import { getUserPlanDetails, STRIPE_PLANS } from '$libs/stripe/products';
 import { formatPrice } from '$utils/formatters';
 
 import { CancelSubscription } from './_components/cancel-subscription';
+import { Notes } from './_components/notes';
 import { QuotaUsed } from './_components/quota-used';
 import { ptBrStripeSubscriptionStatus } from './ptbr-status';
 
@@ -64,6 +65,8 @@ export default async function SettingsBillingPage() {
           </CardFooter>
         )}
       </Card>
+
+      <Notes user={user} />
 
       {!STRIPE_PLANS.free.isFree(planDetails.stripePriceId) && (
         <>

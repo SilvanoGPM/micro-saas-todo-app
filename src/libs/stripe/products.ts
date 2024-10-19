@@ -1,5 +1,13 @@
 import { prisma } from '../prisma';
 
+export const STRIPE_PRODUCTS = {
+  notes: {
+    priceId: 'price_1Q8Q2FJ9ikhb1lLTGU0zGThS',
+    name: 'Anotações',
+    price: 20,
+  },
+};
+
 export const STRIPE_PLANS = {
   premium: {
     priceId: 'price_1Q8CvIJ9ikhb1lLTs7Gs1zqP',

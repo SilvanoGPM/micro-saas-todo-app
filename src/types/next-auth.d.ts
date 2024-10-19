@@ -9,6 +9,7 @@ declare module 'next-auth' {
       image: string;
       roles: string;
       stripePriceId?: string | null;
+      stripeNotesPaid: boolean;
     };
   }
 }
@@ -21,5 +22,6 @@ declare module 'next-auth/jwt' {
     image: string;
     roles: string;
     stripePriceId?: string | null;
+    stripeNotesPaid: boolean;
   }
 }

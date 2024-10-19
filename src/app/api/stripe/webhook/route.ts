@@ -1,8 +1,11 @@
 import Stripe from 'stripe';
 
 import { env } from '$env';
-import { handleProccessWebhookUpdatedSubscription } from '$libs/stripe/handlers';
 import { stripe } from '$libs/stripe';
+import {
+  handleProccessCheckoutSuccess,
+  handleProccesUpdatedSubscription,
+} from '$libs/stripe/handlers';
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -26,7 +29,12 @@ export async function POST(req: Request) {
   switch (event.type) {
     case 'customer.subscription.created':
     case 'customer.subscription.updated':
-      await handleProccessWebhookUpdatedSubscription(event.data);
+      await handleProccesUpdatedSubscription(event.data);
+      break;
+
+    case 'checkout.session.completed':
+    case 'checkout.session.async_payment_succeeded':
+      await handleProccessCheckoutSuccess(event.data);
       break;
 
     default:

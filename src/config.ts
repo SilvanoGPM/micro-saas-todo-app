@@ -9,3 +9,7 @@ export const HTTP_KEYS = {
     get: 'user.get',
   },
 };
+
+export const POOLING_NAMES = {
+  notes: 'pooling-notes',
+};

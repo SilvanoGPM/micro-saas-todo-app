@@ -1,4 +1,5 @@
 import { env } from '$env';
+import { getFlashMessage } from '$utils/flash-messages';
 
 import { ROUTES } from '../auth/routes';
 import { prisma } from '../prisma';
@@ -7,6 +8,8 @@ import { createStripeCustomerIfNotExists } from './customers';
 import { STRIPE_PLANS } from './products';
 
 import { stripe } from '.';
+
+export const billingUrl = `${env.NEXT_PUBLIC_APP_URL}${ROUTES.private.billing.path}`;
 
 export async function upgradePlan(userEmail: string, priceId: string) {
   try {
@@ -39,8 +42,6 @@ export async function upgradePlan(userEmail: string, priceId: string) {
       email: userEmail,
       name: user.name || '',
     });
-
-    const billingUrl = `${env.NEXT_PUBLIC_APP_URL}${ROUTES.private.billing.path}`;
 
     const session = await stripe.billingPortal.sessions.create({
       locale: 'pt-BR',
@@ -119,7 +120,17 @@ export async function changeToFreeSubscription(userEmail: string) {
   });
 }
 
-export async function buyProduct(userEmail: string, priceId: string) {
+export async function buyProduct({
+  priceId,
+  userEmail,
+  poolingName,
+  anchor,
+}: {
+  userEmail: string;
+  priceId: string;
+  poolingName?: string;
+  anchor?: string;
+}) {
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -128,8 +139,6 @@ export async function buyProduct(userEmail: string, priceId: string) {
       select: {
         id: true,
         name: true,
-        stripePriceId: true,
-        stripeSubscriptionId: true,
       },
     });
 
@@ -137,24 +146,24 @@ export async function buyProduct(userEmail: string, priceId: string) {
       throw new Error('Usuário não encontrado');
     }
 
-    if (!user.stripeSubscriptionId) {
-      throw new Error('Usuário não possui plano ativo');
-    }
-
     const customer = await createStripeCustomerIfNotExists({
       email: userEmail,
       name: user.name || '',
     });
 
-    const billingUrl = `${env.NEXT_PUBLIC_APP_URL}${ROUTES.private.billing.path}`;
+    const successFlashMessage = getFlashMessage(
+      'success',
+      'Aguarde enquanto processamos seu pagamento, você será notificado por e-mail em breve.',
+    );
 
     const session = await stripe.checkout.sessions.create({
       locale: 'pt-BR',
-      success_url: `${billingUrl}?success=true`,
+      success_url: `${billingUrl}${
+        anchor ? `#${anchor.replaceAll('#', '')}` : ''
+      }?${successFlashMessage}${poolingName ? `&${poolingName}=true` : ''}`,
       cancel_url: billingUrl,
       customer: customer.id,
-
-      payment_method_types: ['card', 'boleto'],
+      mode: 'payment',
 
       line_items: [
         {

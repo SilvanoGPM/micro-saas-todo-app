@@ -52,6 +52,7 @@ model User {
   stripeSubscriptionStatus String?
   stripePriceId            String?
   stripeUpgradedAt         DateTime?
+  stripeNotesPaid          Boolean   @default(false) @map("stripe_notes_paid")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
@@ -78,7 +79,7 @@ model Todo {
   completedAt                 DateTime? @map("completed_at")
   createdAt                   DateTime  @default(now()) @map("created_at")
   updatedAt                   DateTime  @updatedAt @map("updated_at")
-  notes                       String?   @db.Text @default("")
+  notes                       String?   @default("") @db.Text
   blockWhenCancelSubscription Boolean?  @default(false) @map("block_when_cancel_subscription")
 
   userId String @map("user_id")

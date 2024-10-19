@@ -8,6 +8,7 @@ export function applyTokenToSession(token: JWT, session: Session) {
   session.user.image = token.image;
   session.user.roles = token.roles;
   session.user.stripePriceId = token.stripePriceId;
+  session.user.stripeNotesPaid = token.stripeNotesPaid;
 
   return session;
 }
