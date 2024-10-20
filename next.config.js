@@ -14,7 +14,11 @@ const withPWA = require('next-pwa')({
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    serverComponentsExternalPackages: ['@prisma/client'],
+    serverComponentsExternalPackages: [
+      '@prisma/client',
+      '@aws-sdk/client-s3',
+      '@aws-sdk/s3-request-presigner',
+    ],
   },
 
   eslint: {
