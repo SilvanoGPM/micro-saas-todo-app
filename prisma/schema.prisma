@@ -40,19 +40,23 @@ model Session {
 }
 
 model User {
-  id                       String    @id @default(cuid())
-  name                     String?
-  email                    String?   @unique
-  emailVerified            DateTime? @map("email_verified")
-  image                    String?
-  password                 String?
-  roles                    String?   @default("user")
-  stripeCustomerId         String?
-  stripeSubscriptionId     String?
-  stripeSubscriptionStatus String?
-  stripePriceId            String?
-  stripeUpgradedAt         DateTime?
-  stripeNotesPaid          Boolean   @default(false) @map("stripe_notes_paid")
+  id                        String    @id @default(cuid())
+  name                      String?
+  email                     String?   @unique
+  emailVerified             DateTime? @map("email_verified")
+  image                     String?
+  password                  String?
+  roles                     String?   @default("user")
+  stripeCustomerId          String?
+  stripeSubscriptionId      String?
+  stripeSubscriptionStatus  String?
+  stripePriceId             String?
+  stripeUpgradedAt          DateTime?
+  stripeNotesPaid           Boolean   @default(false) @map("stripe_notes_paid")
+
+  notificationsSubscription String?   @default("") @map("notifications_subscription") @db.Text
+  allowEmailNotifications   Boolean?  @default(true) @map("allow_email_notifications")
+  allowPushNotifications    Boolean?  @default(true) @map("allow_push_notifications")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")

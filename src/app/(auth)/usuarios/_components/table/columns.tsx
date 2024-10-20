@@ -2,10 +2,16 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { CheckCircle, EditIcon, EyeIcon, MoreHorizontal } from 'lucide-react';
+import {
+  CheckCircle,
+  EditIcon,
+  EyeIcon,
+  MoreHorizontal,
+  SendIcon,
+} from 'lucide-react';
 import { Session } from 'next-auth';
-import { memo, useTransition } from 'react';
 import Link from 'next/link';
+import { memo, useTransition } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '$components/ui/avatar';
 import { Badge } from '$components/ui/badge';
@@ -29,15 +35,16 @@ import {
 import { HTTP_KEYS } from '$config';
 import { User } from '$http/users';
 import { getPtBrRoles, ptBrRoles, UserRole } from '$libs/auth/roles';
+import { ROUTES } from '$libs/auth/routes';
 import { cn } from '$utils/cn';
 import { handleAction } from '$utils/handle-action';
 import { handleError } from '$utils/handle-error';
-import { ROUTES } from '$libs/auth/routes';
 
 import { changeRoleAction } from './actions';
 
 export interface GetColumnsParams {
   user: Session['user'];
+  setUserIdToSendNotification: (userId: string) => void;
 }
 
 interface ActionsCellProps extends GetColumnsParams {
@@ -162,7 +169,11 @@ export const getColumns = (props: GetColumnsParams) =>
 
 const MemoizedActionsCell = memo(ActionsCell);
 
-function ActionsCell({ row, user }: ActionsCellProps) {
+function ActionsCell({
+  row,
+  user,
+  setUserIdToSendNotification,
+}: ActionsCellProps) {
   const item = row.original;
 
   const queryClient = useQueryClient();
@@ -239,6 +250,14 @@ function ActionsCell({ row, user }: ActionsCellProps) {
               <EyeIcon className="mr-2 size-3" />
               Ver Tarefas
             </Link>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            disabled={!row.original.notificationsSubscription}
+            onClick={() => setUserIdToSendNotification(row.original.id)}
+          >
+            <SendIcon className="mr-2 size-3" />
+            Enviar Notificação
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />

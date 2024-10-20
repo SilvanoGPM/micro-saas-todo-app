@@ -5,6 +5,9 @@ import { z } from 'zod';
 import { actionsClient } from '$libs/actions';
 import { prisma } from '$libs/prisma';
 import { ROLES_SEPARATOR, UserRoleEnum } from '$libs/auth/roles';
+import { sendNotifications } from '$libs/notifications/send-notification';
+
+import { sendNotificationSchema } from './schemas';
 
 export const changeRoleAction = actionsClient.createAction({
   id: 'user.change.role',
@@ -47,6 +50,23 @@ export const changeRoleAction = actionsClient.createAction({
       data: {
         roles,
       },
+    });
+  },
+});
+
+export const sendNotificationAction = actionsClient.createAction({
+  id: 'user.send.notification',
+  schema: sendNotificationSchema,
+
+  authorization: {
+    roles: [UserRoleEnum.ADMIN],
+  },
+
+  async handler({ data }) {
+    await sendNotifications({
+      userId: data.userId,
+      title: data.title,
+      body: data.body,
     });
   },
 });

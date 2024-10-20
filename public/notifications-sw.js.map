@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["notifications-sw.ts"],
+  "sourcesContent": ["declare const clients: Clients;\n\ninterface INotificationPayload {\n  icon: string;\n  title: string;\n  body: string;\n  imageUrl?: string;\n  data?: object;\n}\n\n// eslint-disable-next-line @typescript-eslint/no-explicit-any\nconst sw = self as any;\n\n// eslint-disable-next-line @typescript-eslint/no-explicit-any\nsw.addEventListener('push', (event: any) => {\n  const notificationPayload = event.data?.json() as INotificationPayload;\n\n  event.waitUntil(\n    sw.registration.showNotification(notificationPayload.title, {\n      icon: notificationPayload.icon,\n      body: notificationPayload.body,\n      image: notificationPayload.imageUrl,\n      data: notificationPayload.data,\n      // eslint-disable-next-line @typescript-eslint/no-explicit-any\n    } as any),\n  );\n});\n\n// eslint-disable-next-line @typescript-eslint/no-explicit-any\nsw.addEventListener('notificationclick', function (event: any) {\n  event.notification.close();\n  event.waitUntil(\n    clients.openWindow(event.notification?.data?.url || event?.data?.url),\n  );\n});\n"],
+  "mappings": "AAWA,IAAMA,EAAK,KAGXA,EAAG,iBAAiB,OAASC,GAAe,CAC1C,IAAMC,EAAsBD,EAAM,MAAM,KAAK,EAE7CA,EAAM,UACJD,EAAG,aAAa,iBAAiBE,EAAoB,MAAO,CAC1D,KAAMA,EAAoB,KAC1B,KAAMA,EAAoB,KAC1B,MAAOA,EAAoB,SAC3B,KAAMA,EAAoB,IAE5B,CAAQ,CACV,CACF,CAAC,EAGDF,EAAG,iBAAiB,oBAAqB,SAAUC,EAAY,CAC7DA,EAAM,aAAa,MAAM,EACzBA,EAAM,UACJ,QAAQ,WAAWA,EAAM,cAAc,MAAM,KAAOA,GAAO,MAAM,GAAG,CACtE,CACF,CAAC",
+  "names": ["sw", "event", "notificationPayload"]
+}

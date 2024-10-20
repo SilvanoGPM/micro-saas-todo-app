@@ -2,20 +2,24 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 import { Session } from 'next-auth';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { DataTable } from '$components/ui/data-table';
 import { useTableQueryParams } from '$components/ui/data-table/use-table-query-params';
 import { HTTP_KEYS } from '$config';
-import { useGetUsers } from '$http/users';
+import { useGetUsers, User } from '$http/users';
 
 import { getColumns } from './columns';
+import { UserToSendNotificationModal } from './user-to-send-notification-modal';
 
 export interface UsersTableProps {
   user: Session['user'];
 }
 
 export function UsersTable({ user }: UsersTableProps) {
+  const [userIdToSendNotification, setUserIdToSendNotification] =
+    useState<string>('');
+
   const { search, page, size, sort, resetTableParams } = useTableQueryParams();
 
   const queryClient = useQueryClient();
@@ -33,7 +37,10 @@ export function UsersTable({ user }: UsersTableProps) {
     resetTableParams();
   }
 
-  const columns = useMemo(() => getColumns({ user }), [user]);
+  const columns = useMemo(
+    () => getColumns({ user, setUserIdToSendNotification }),
+    [user],
+  );
 
   return (
     <>
@@ -50,6 +57,11 @@ export function UsersTable({ user }: UsersTableProps) {
           createdAt: false,
           updatedAt: false,
         }}
+      />
+
+      <UserToSendNotificationModal
+        userId={userIdToSendNotification}
+        onClose={() => setUserIdToSendNotification('')}
       />
     </>
   );

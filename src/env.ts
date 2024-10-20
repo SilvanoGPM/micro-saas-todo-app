@@ -17,6 +17,8 @@ export const env = createEnv({
 
     NEXT_PUBLIC_USE_FAKES: z.string().optional(),
 
+    NEXT_PUBLIC_NOTIFICATIONS_PUBLIC_KEY: z.string(),
+
     NODE_ENV: z.enum(['test', 'development', 'production']),
   },
 
@@ -35,6 +37,8 @@ export const env = createEnv({
     SPACES_NAME: z.string(),
     SPACES_KEY: z.string(),
     SPACES_SECRET: z.string(),
+
+    NOTIFICATIONS_PRIVATE_KEY: z.string(),
   },
 
   runtimeEnv: {
@@ -57,5 +61,10 @@ export const env = createEnv({
     SPACES_NAME: process.env.SPACES_NAME,
     SPACES_KEY: process.env.SPACES_KEY,
     SPACES_SECRET: process.env.SPACES_SECRET,
+
+    NEXT_PUBLIC_NOTIFICATIONS_PUBLIC_KEY:
+      process.env.NEXT_PUBLIC_NOTIFICATIONS_PUBLIC_KEY,
+
+    NOTIFICATIONS_PRIVATE_KEY: process.env.NOTIFICATIONS_PRIVATE_KEY,
   },
 });

@@ -44,7 +44,7 @@ export interface UseActionFormProps<
 
   disableDefaultErrorHandling?: boolean;
 
-  fetcher?: () => Promise<TFieldValues | undefined | null>;
+  fetcher?: () => Promise<Partial<TFieldValues> | undefined | null>;
 
   onSubmitSuccessful?: (
     data: TFieldValues,
@@ -152,7 +152,7 @@ export function useActionForm<
       fetcher?.()
         .then((data) => {
           if (data) {
-            form.reset(data);
+            form.reset(data as TFieldValues);
           } else {
             form.reset(form.formState.defaultValues as TFieldValues);
           }

@@ -12,6 +12,7 @@ export interface HttpUser extends BaseEntity {
   name: string;
   email: string;
   roles: string;
+  notificationsSubscription?: string | null;
   image?: string | null;
 }
 
