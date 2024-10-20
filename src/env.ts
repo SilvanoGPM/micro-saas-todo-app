@@ -39,6 +39,8 @@ export const env = createEnv({
     SPACES_SECRET: z.string(),
 
     NOTIFICATIONS_PRIVATE_KEY: z.string(),
+
+    CRON_KEY: z.string(),
   },
 
   runtimeEnv: {
@@ -66,5 +68,7 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_NOTIFICATIONS_PUBLIC_KEY,
 
     NOTIFICATIONS_PRIVATE_KEY: process.env.NOTIFICATIONS_PRIVATE_KEY,
+
+    CRON_KEY: process.env.CRON_KEY,
   },
 });

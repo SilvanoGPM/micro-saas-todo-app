@@ -4,7 +4,7 @@
   "description": "Salve suas tarefas do dia a dia com facilidade!",
   "theme_color": "#FFFFFF",
   "background_color": "#FFFFFF",
-  "start_url": "/",
+  "start_url": "/tarefas",
   "display": "standalone",
   "orientation": "portrait",
   "icons": [
