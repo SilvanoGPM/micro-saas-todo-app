@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import {
   FieldValues,
   useForm,
@@ -7,17 +8,35 @@ import {
   UseFormReturn,
 } from 'react-hook-form';
 import { z } from 'zod';
-import { useEffect, useState } from 'react';
 
+import { uploadFileAction } from '$libs/actions/upload';
+import { UploadFileData } from '$libs/s3';
 import { handleAction } from '$utils/handle-action';
 import { handleError } from '$utils/handle-error';
+import { objectToFormData } from '$utils/object-to-form-data';
 
 export interface UseActionFormProps<
-  R extends { data: unknown; error: unknown },
   TFieldValues extends FieldValues = FieldValues,
+  R extends { data: unknown; error: unknown } = {
+    data: unknown;
+    error: unknown;
+  },
 > extends UseFormProps<TFieldValues> {
   schema: z.ZodSchema<TFieldValues>;
   action: (data: TFieldValues) => Promise<R | void>;
+
+  files?: {
+    bucket?: string;
+    acl?: string;
+    cacheControl?: string;
+    removeUrlQueryParams?: boolean;
+
+    fields: Array<{
+      key: keyof TFieldValues;
+      mapKeyTo?: string;
+      fileMap?: (file: File) => File;
+    }>;
+  };
 
   queriesToInvalidate?: Array<string | string[]>;
 
@@ -36,11 +55,15 @@ export interface UseActionFormProps<
 }
 
 export function useActionForm<
-  R extends { data: unknown; error: unknown },
   TFieldValues extends FieldValues = FieldValues,
+  R extends { data: unknown; error: unknown } = {
+    data: unknown;
+    error: unknown;
+  },
 >({
   action,
   schema,
+  files = { fields: [] },
   defaultErrorMessage,
   onSubmitSuccessful,
   onSubmitError,
@@ -48,18 +71,56 @@ export function useActionForm<
   disableDefaultErrorHandling = false,
   fetcher,
   ...props
-}: UseActionFormProps<R, TFieldValues>) {
+}: UseActionFormProps<TFieldValues, R>) {
   const queryClient = useQueryClient();
 
   const [isFetching, setIsFetching] = useState(false);
 
-  const form = useForm<z.infer<typeof schema>>({
+  const form = useForm<TFieldValues>({
     ...props,
     resolver: zodResolver(schema),
   });
 
   const submit = form.handleSubmit(async (data) => {
     try {
+      for (const {
+        key,
+        mapKeyTo = key,
+        fileMap = (file: File) => file,
+      } of files.fields) {
+        if (data[key]) {
+          if (!Array.isArray(data[key])) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            data[key] = [data[key]] as any;
+          }
+
+          const uploadedFilesUrl = await Promise.all(
+            (data[key] as File[])
+              .filter(Boolean)
+              .map(fileMap)
+              .map(async (file) =>
+                uploadFileAction(
+                  objectToFormData<UploadFileData>({
+                    file,
+                    key: file.name,
+                    bucket: files.bucket,
+                    acl: files.acl,
+                    cacheControl: files.cacheControl,
+                    removeUrlQueryParams: files.removeUrlQueryParams ?? true,
+                  }),
+                ),
+              ),
+          );
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          data[mapKeyTo] = uploadedFilesUrl as any;
+
+          if (mapKeyTo !== key) {
+            delete data[key];
+          }
+        }
+      }
+
       const result = await handleAction(action, data);
 
       for (const queryKey of queriesToInvalidate) {

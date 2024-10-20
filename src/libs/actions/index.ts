@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { auth } from '$libs/auth';
 import { errorToJson } from '$utils/handle-error';
 
-import { hasAllRoles, hasSomeRoles, isAdmin, UserRole } from './auth/roles';
+import { hasAllRoles, hasSomeRoles, isAdmin, UserRole } from '../auth/roles';
 
 export interface Action<S = any, R = any> {
   id: string;

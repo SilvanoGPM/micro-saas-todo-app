@@ -6,7 +6,11 @@ export function objectToFormData<T extends object>(obj: T) {
   const formData = new FormData();
 
   for (const key in obj) {
-    formData.append(key, obj[key] as string);
+    const value = obj[key] as string;
+
+    if (value) {
+      formData.append(key, value);
+    }
   }
 
   return formData;

@@ -30,6 +30,11 @@ export const env = createEnv({
     STRIPE_PUBLISHABLE_KEY: z.string(),
     STRIPE_SECRET_KEY: z.string(),
     STRIPE_WEBHOOK_SECRET: z.string(),
+
+    SPACES_ENDPOINT: z.string(),
+    SPACES_NAME: z.string(),
+    SPACES_KEY: z.string(),
+    SPACES_SECRET: z.string(),
   },
 
   runtimeEnv: {
@@ -47,5 +52,10 @@ export const env = createEnv({
     STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+
+    SPACES_ENDPOINT: process.env.SPACES_ENDPOINT,
+    SPACES_NAME: process.env.SPACES_NAME,
+    SPACES_KEY: process.env.SPACES_KEY,
+    SPACES_SECRET: process.env.SPACES_SECRET,
   },
 });
