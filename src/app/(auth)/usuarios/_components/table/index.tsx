@@ -7,9 +7,10 @@ import { useMemo, useState } from 'react';
 import { DataTable } from '$components/ui/data-table';
 import { useTableQueryParams } from '$components/ui/data-table/use-table-query-params';
 import { HTTP_KEYS } from '$config';
-import { useGetUsers, User } from '$http/users';
+import { useGetUsers } from '$http/users';
 
 import { getColumns } from './columns';
+import { UserToSendMailModal } from './user-to-send-mail-modal';
 import { UserToSendNotificationModal } from './user-to-send-notification-modal';
 
 export interface UsersTableProps {
@@ -19,6 +20,8 @@ export interface UsersTableProps {
 export function UsersTable({ user }: UsersTableProps) {
   const [userIdToSendNotification, setUserIdToSendNotification] =
     useState<string>('');
+
+  const [userIdToSendEmail, setUserIdToSendEmail] = useState<string>('');
 
   const { search, page, size, sort, resetTableParams } = useTableQueryParams();
 
@@ -38,7 +41,8 @@ export function UsersTable({ user }: UsersTableProps) {
   }
 
   const columns = useMemo(
-    () => getColumns({ user, setUserIdToSendNotification }),
+    () =>
+      getColumns({ user, setUserIdToSendNotification, setUserIdToSendEmail }),
     [user],
   );
 
@@ -62,6 +66,11 @@ export function UsersTable({ user }: UsersTableProps) {
       <UserToSendNotificationModal
         userId={userIdToSendNotification}
         onClose={() => setUserIdToSendNotification('')}
+      />
+
+      <UserToSendMailModal
+        userId={userIdToSendEmail}
+        onClose={() => setUserIdToSendEmail('')}
       />
     </>
   );

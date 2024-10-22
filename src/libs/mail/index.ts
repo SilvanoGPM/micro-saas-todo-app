@@ -1,13 +1,25 @@
 import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import React from 'react';
 
 import { env } from '$env';
+
+import mailwindCss from './css';
+import { parseImages } from './images';
+import { TemplateData, TemplateName, templates } from './templates';
 
 export interface SendMailOptions {
   to: string;
   subject: string;
   text?: string;
   html?: string;
+  attachments?: nodemailer.SendMailOptions['attachments'];
+}
+
+export interface SendTemplateMailOptions<T extends TemplateName> {
+  to: string;
+  subject: string;
+  data: TemplateData<T>;
 }
 
 export function sendMail(options: SendMailOptions) {
@@ -18,6 +30,35 @@ export function sendMail(options: SendMailOptions) {
   }
 
   return nodemailerSendMail(options);
+}
+
+export async function sendTemplateMail<T extends TemplateName>(
+  template: T,
+  { subject, to, data: rawData }: SendTemplateMailOptions<T>,
+) {
+  const data = await templates[template].parseAsync(rawData);
+
+  const ReactDOMServer = (await import('react-dom/server')).default;
+  const Component = (await import(`./templates/${template}`)).default;
+
+  const rawHtml = ReactDOMServer.renderToStaticMarkup(
+    React.createElement(Component, data),
+  );
+
+  const styledHtml = await mailwindCss(rawHtml, {
+    tailwindCss: './src/libs/mail/styles.css',
+  });
+
+  const [html, attachments] = await parseImages(styledHtml, {
+    assetsFolder: './src/libs/mail/assets',
+  });
+
+  return sendMail({
+    to,
+    subject,
+    html,
+    attachments,
+  });
 }
 
 const transporter = nodemailer.createTransport({
@@ -36,6 +77,7 @@ function nodemailerSendMail(options: SendMailOptions) {
       {
         ...options,
         from: env.EMAIL_FROM,
+        attachDataUrls: true,
       },
       (error, data) => {
         if (error) {

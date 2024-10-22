@@ -6,6 +6,7 @@ import {
   CheckCircle,
   EditIcon,
   EyeIcon,
+  MailCheckIcon,
   MoreHorizontal,
   SendIcon,
 } from 'lucide-react';
@@ -45,6 +46,7 @@ import { changeRoleAction } from './actions';
 export interface GetColumnsParams {
   user: Session['user'];
   setUserIdToSendNotification: (userId: string) => void;
+  setUserIdToSendEmail: (userId: string) => void;
 }
 
 interface ActionsCellProps extends GetColumnsParams {
@@ -173,6 +175,7 @@ function ActionsCell({
   row,
   user,
   setUserIdToSendNotification,
+  setUserIdToSendEmail,
 }: ActionsCellProps) {
   const item = row.original;
 
@@ -258,6 +261,14 @@ function ActionsCell({
           >
             <SendIcon className="mr-2 size-3" />
             Enviar Notificação
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            disabled={!row.original.notificationsSubscription}
+            onClick={() => setUserIdToSendEmail(row.original.id)}
+          >
+            <MailCheckIcon className="mr-2 size-3" />
+            Enviar E-mail
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />

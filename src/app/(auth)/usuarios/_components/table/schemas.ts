@@ -6,4 +6,11 @@ export const sendNotificationSchema = z.object({
   body: z.string(),
 });
 
-export type SendNotification = z.infer<typeof sendNotificationSchema>;
+export const sendMailSchema = z.object({
+  userEmail: z.string(),
+  title: z.string(),
+  message: z.string(),
+});
+
+export type SendNotificationSchema = z.infer<typeof sendNotificationSchema>;
+export type SendMailSchema = z.infer<typeof sendMailSchema>;

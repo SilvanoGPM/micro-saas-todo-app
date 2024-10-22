@@ -20,34 +20,34 @@ import {
 import { Form } from '$components/ui/form';
 import { useActionForm } from '$hooks/use-action-form';
 
-import { sendNotificationAction } from './actions';
-import { sendNotificationSchema } from './schemas';
-import { useUserIdFetcher } from './use-fetcher';
+import { sendMailAction } from './actions';
+import { sendMailSchema } from './schemas';
+import { useUserEmailFetcher } from './use-fetcher';
 
-export interface UserToSendNotificationModalProps {
+export interface UserToSendMailModalProps {
   userId: string;
   onClose: () => void;
 }
 
-export function UserToSendNotificationModal({
+export function UserToSendMailModal({
   userId,
   onClose,
-}: UserToSendNotificationModalProps) {
-  const userNotificationFetcher = useUserIdFetcher(userId);
+}: UserToSendMailModalProps) {
+  const userEmailFetcher = useUserEmailFetcher(userId);
 
   const form = useActionForm({
-    action: sendNotificationAction,
-    schema: sendNotificationSchema,
+    action: sendMailAction,
+    schema: sendMailSchema,
 
-    fetcher: userNotificationFetcher,
+    fetcher: userEmailFetcher,
 
     onSubmitSuccessful: () => {
-      toast.success(`Notificação enviada com sucesso`);
+      toast.success(`E-mail enviado com sucesso`);
 
-      onClose();
+      // onClose();
     },
 
-    defaultErrorMessage: `Não foi possível enviar notificação.`,
+    defaultErrorMessage: `Não foi possível enviar e-mail.`,
   });
 
   function close() {
@@ -63,9 +63,9 @@ export function UserToSendNotificationModal({
     >
       <DialogContent className="max-w-[300px] sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Enviar notificação</DialogTitle>
+          <DialogTitle>Enviar e-mail</DialogTitle>
           <DialogDescription>
-            Enviar uma notificação privada para esse usuário?
+            Envie um e-mail privado para esse usuário.
           </DialogDescription>
         </DialogHeader>
 
@@ -78,14 +78,16 @@ export function UserToSendNotificationModal({
                 label="Título"
                 labelIcon={TypeOutlineIcon}
                 placeholder="ex: Olá tudo bem?"
+                isLoading={form.isFetching}
               />
 
               <TextareaForm
                 form={form}
-                name="body"
+                name="message"
                 label="Mensagem"
                 labelIcon={MessageCircleIcon}
                 placeholder="ex: Suas tarefas pendentes estão te esperando..."
+                isLoading={form.isFetching}
               />
             </form>
           </Form>
@@ -93,7 +95,7 @@ export function UserToSendNotificationModal({
 
         <DialogFooter className="gap-2">
           <Button
-            isLoading={form.formState.isSubmitting}
+            isLoading={form.formState.isSubmitting || form.isFetching}
             onClick={form.submit}
             className="flex-1"
           >
@@ -101,7 +103,7 @@ export function UserToSendNotificationModal({
           </Button>
 
           <Button
-            isLoading={form.formState.isSubmitting}
+            isLoading={form.formState.isSubmitting || form.isFetching}
             onClick={close}
             variant="outline"
             className="flex-1"

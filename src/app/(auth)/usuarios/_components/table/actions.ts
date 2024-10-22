@@ -6,8 +6,9 @@ import { actionsClient } from '$libs/actions';
 import { prisma } from '$libs/prisma';
 import { ROLES_SEPARATOR, UserRoleEnum } from '$libs/auth/roles';
 import { sendNotifications } from '$libs/notifications/send-notification';
+import { sendTemplateMail } from '$libs/mail';
 
-import { sendNotificationSchema } from './schemas';
+import { sendMailSchema, sendNotificationSchema } from './schemas';
 
 export const changeRoleAction = actionsClient.createAction({
   id: 'user.change.role',
@@ -67,6 +68,26 @@ export const sendNotificationAction = actionsClient.createAction({
       userId: data.userId,
       title: data.title,
       body: data.body,
+    });
+  },
+});
+
+export const sendMailAction = actionsClient.createAction({
+  id: 'user.send.mail',
+  schema: sendMailSchema,
+
+  authorization: {
+    roles: [UserRoleEnum.ADMIN],
+  },
+
+  async handler({ data }) {
+    await sendTemplateMail('contact', {
+      to: data.userEmail,
+      subject: data.title,
+      data: {
+        title: data.title,
+        message: data.message,
+      },
     });
   },
 });
