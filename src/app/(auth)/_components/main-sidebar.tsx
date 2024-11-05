@@ -104,7 +104,7 @@ export function MainSidebar({ user }: MainSidebarProps) {
                     href={link.path}
                     icon={<link.icon className="size-4" />}
                     isActive={isPathActive({
-                      activePath: pathname,
+                      activePath: pathname || '',
                       path: link.path,
                       mode: 'startsWith',
                     })}
@@ -120,7 +120,10 @@ export function MainSidebar({ user }: MainSidebarProps) {
           <DefaultSidebarNavGroup>
             <DefaultSidebarNavTitle>Links úteis</DefaultSidebarNavTitle>
             <DefaultSidebarNavItem href="#">Ajuda</DefaultSidebarNavItem>
-            <DefaultSidebarNavItem href="#">Documentação</DefaultSidebarNavItem>
+
+            <DefaultSidebarNavItem href={ROUTES.docs}>
+              Documentação
+            </DefaultSidebarNavItem>
           </DefaultSidebarNavGroup>
 
           {STRIPE_PLANS.free.isFree(user.stripePriceId || '') && (

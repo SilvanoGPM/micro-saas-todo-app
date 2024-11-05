@@ -1,18 +1,18 @@
 import WebPush from 'web-push';
 
-import { prisma } from '$libs/prisma';
 import { env } from '$env';
-
-export interface SendNotificationsParams {
-  userId: string;
-  title: string;
-  body: string;
-}
+import { prisma } from '$libs/prisma';
 
 export interface PushNotificationParams {
   subscription: WebPush.PushSubscription;
   title: string;
   body: string;
+  url?: string;
+}
+
+export interface SendNotificationsParams
+  extends Omit<PushNotificationParams, 'subscription'> {
+  userId: string;
 }
 
 WebPush.setVapidDetails(
@@ -21,10 +21,31 @@ WebPush.setVapidDetails(
   env.NOTIFICATIONS_PRIVATE_KEY,
 );
 
+export async function pushNotification({
+  subscription,
+  body,
+  title,
+  url,
+}: PushNotificationParams) {
+  try {
+    await WebPush.sendNotification(
+      subscription,
+      JSON.stringify({
+        title,
+        body,
+        url,
+      }),
+    );
+  } catch {
+    //
+  }
+}
+
 export async function sendNotifications({
   userId,
   body,
   title,
+  url,
 }: SendNotificationsParams) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -39,21 +60,7 @@ export async function sendNotifications({
 
   await Promise.all(
     subscription.map((sub: WebPush.PushSubscription) =>
-      pushNotification({ subscription: sub, body, title }),
+      pushNotification({ subscription: sub, body, title, url }),
     ),
-  );
-}
-
-export async function pushNotification({
-  subscription,
-  body,
-  title,
-}: PushNotificationParams) {
-  await WebPush.sendNotification(
-    subscription,
-    JSON.stringify({
-      title,
-      body,
-    }),
   );
 }

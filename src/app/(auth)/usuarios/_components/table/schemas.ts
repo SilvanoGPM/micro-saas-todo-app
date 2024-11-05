@@ -1,16 +1,19 @@
 import { z } from 'zod';
 
+import { fieldIsRequiredValidation } from '$utils/zod';
+
 export const sendNotificationSchema = z.object({
-  userId: z.string(),
-  title: z.string(),
-  body: z.string(),
+  userId: z.string(fieldIsRequiredValidation),
+  title: z.string(fieldIsRequiredValidation),
+  body: z.string(fieldIsRequiredValidation),
+  url: z.string(fieldIsRequiredValidation).url({ message: 'URL inválida' }),
 });
 
 export const sendMailSchema = z.object({
-  userEmail: z.string(),
-  userName: z.string(),
-  title: z.string(),
-  message: z.string(),
+  userEmail: z.string(fieldIsRequiredValidation),
+  userName: z.string(fieldIsRequiredValidation),
+  title: z.string(fieldIsRequiredValidation),
+  message: z.string(fieldIsRequiredValidation),
 });
 
 export type SendNotificationSchema = z.infer<typeof sendNotificationSchema>;

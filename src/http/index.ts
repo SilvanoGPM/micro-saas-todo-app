@@ -2,8 +2,6 @@ import { Mapper } from '$mappers';
 
 import { BaseEntity, Page } from './types';
 
-// Sobrecarga de funções
-
 export function applyMapper<I extends BaseEntity, O>(
   mapper: Mapper<I, O>,
   input: Page<I>,

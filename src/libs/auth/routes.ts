@@ -9,6 +9,8 @@ export const ROUTES = {
     reset: '/reset',
   },
 
+  docs: '/docs',
+
   private: {
     home: {
       path: '/tarefas',

@@ -68,6 +68,7 @@ export const sendNotificationAction = actionsClient.createAction({
       userId: data.userId,
       title: data.title,
       body: data.body,
+      url: data.url,
     });
   },
 });

@@ -1,13 +1,22 @@
-/* eslint-disable import/order */
-const isProduction = process.env.NODE_ENV === 'production';
+import bundleAnalyzer from '@next/bundle-analyzer';
+import nextPwa from 'next-pwa';
+import { withSentryConfig } from '@sentry/nextjs';
+import nextra from 'nextra';
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
+const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
-const withPWA = require('next-pwa')({
+const isProduction = process.env.NODE_ENV === 'production';
+
+const withPWA = nextPwa({
   dest: 'public',
   disable: !isProduction,
+});
+
+const withNextra = nextra({
+  theme: 'nextra-theme-docs',
+  themeConfig: './theme.config.jsx',
 });
 
 /** @type {import('next').NextConfig} */
@@ -34,17 +43,17 @@ const nextConfig = {
   },
 };
 
-module.exports = withBundleAnalyzer(
-  withPWA({
-    ...nextConfig,
-  }),
+const combinedConfigs = withNextra(
+  withBundleAnalyzer(
+    withPWA({
+      ...nextConfig,
+    }),
+  ),
 );
 
 // Injected content via Sentry wizard below
 
-const { withSentryConfig } = require('@sentry/nextjs');
-
-const sentryConfig = withSentryConfig(module.exports, {
+const sentryConfig = withSentryConfig(combinedConfigs, {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
@@ -84,10 +93,10 @@ const sentryConfig = withSentryConfig(module.exports, {
   automaticVercelMonitors: true,
 });
 
-module.exports = {
+export default {
   ...sentryConfig,
 
   experimental: {
-    instrumentationHook: process.env.NODE_ENV === 'production',
+    instrumentationHook: isProduction,
   },
 };

@@ -1,3 +1,5 @@
+/// <reference lib="webworker" />
+
 declare const clients: Clients;
 
 interface INotificationPayload {
@@ -29,7 +31,29 @@ sw.addEventListener('push', (event: any) => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 sw.addEventListener('notificationclick', function (event: any) {
   event.notification.close();
+
+  const urlToOpen = event.notification.data.url;
+
+  if (!urlToOpen) {
+    return;
+  }
+
   event.waitUntil(
-    clients.openWindow(event.notification?.data?.url || event?.data?.url),
+    clients
+      .matchAll({
+        type: 'window',
+        includeUncontrolled: true,
+      })
+      .then(function (clientList) {
+        for (const client of clientList) {
+          if (client.url === urlToOpen && 'focus' in client) {
+            return client.focus();
+          }
+        }
+
+        if (clients.openWindow) {
+          return clients.openWindow(urlToOpen);
+        }
+      }),
   );
 });

@@ -24,8 +24,9 @@ const authRoutes = Object.values(ROUTES.auth);
 
 export default auth((req) => {
   const isApiAuthRouter = req.nextUrl.pathname.startsWith('/api/auth');
+  const isDocsRouter = req.nextUrl.pathname.startsWith('/docs');
 
-  if (isApiAuthRouter) {
+  if (isApiAuthRouter || isDocsRouter) {
     return;
   }
 
