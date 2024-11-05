@@ -1,4 +1,5 @@
 import {
+  LinkIcon,
   MessageCircleIcon,
   SendIcon,
   TypeOutlineIcon,
@@ -73,6 +74,7 @@ export function UserToSendNotificationModal({
           <Form {...form}>
             <form className="w-full flex flex-col gap-4">
               <InputForm
+                required
                 form={form}
                 name="title"
                 label="Título"
@@ -81,11 +83,21 @@ export function UserToSendNotificationModal({
               />
 
               <TextareaForm
+                required
                 form={form}
                 name="body"
                 label="Mensagem"
                 labelIcon={MessageCircleIcon}
                 placeholder="ex: Suas tarefas pendentes estão te esperando..."
+              />
+
+              <InputForm
+                form={form}
+                type="url"
+                name="url"
+                label="URL ao abrir"
+                labelIcon={LinkIcon}
+                placeholder="ex: https://example.com"
               />
             </form>
           </Form>
