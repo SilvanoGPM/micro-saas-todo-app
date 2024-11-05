@@ -3,9 +3,10 @@
 import { randomUUID } from 'crypto';
 
 import { env } from '$env';
-import { sendMail } from '$libs/mail';
+import { sendTemplateMail } from '$libs/mail';
 import { prisma } from '$libs/prisma';
 import { getFirstString } from '$utils/strings';
+import { ROUTES } from '$libs/auth/routes';
 
 import { forgotPasswordSchema, ForgotPasswordSchema } from './schema';
 
@@ -53,10 +54,14 @@ export async function forgotPasswordWithCredentials(
       },
     });
 
-    await sendMail({
+    await sendTemplateMail('reset-password', {
       to: data.email,
       subject: 'Recupere sua senha',
-      html: `Olá ${userName}, acesse o link para recuperar sua senha <a href="${env.NEXT_PUBLIC_APP_URL}/reset?token=${verificationToken.token}">clicando aqui</a>`,
+
+      data: {
+        name: userName,
+        action_url: `${env.NEXT_PUBLIC_APP_URL}${ROUTES.auth.reset}?token=${verificationToken.token}`,
+      },
     });
   });
 }

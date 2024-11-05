@@ -2,8 +2,9 @@
 
 import { useCallback } from 'react';
 
-import { handleError } from '$utils/handle-error';
+import { useCreateFetcher } from '$hooks/use-create-fetcher';
 import { getUserById } from '$http/users';
+import { handleError } from '$utils/handle-error';
 
 export function useUserIdFetcher(userId?: string | null) {
   const fetcher = useCallback(async () => {
@@ -26,23 +27,26 @@ export function useUserIdFetcher(userId?: string | null) {
 }
 
 export function useUserEmailFetcher(userId?: string | null) {
-  const fetcher = useCallback(async () => {
-    if (!userId) {
-      return;
-    }
+  return useCreateFetcher(
+    'user-email',
+    async () => {
+      if (!userId) {
+        return;
+      }
 
-    try {
-      const user = await getUserById(userId);
+      try {
+        const user = await getUserById(userId);
 
-      return {
-        userEmail: user.email,
-        title: '',
-        message: '',
-      };
-    } catch (error) {
-      handleError(error, 'Não foi possível carregar usuário');
-    }
-  }, [userId]);
-
-  return fetcher;
+        return {
+          userEmail: user.email,
+          userName: user.name,
+          title: '',
+          message: '',
+        };
+      } catch (error) {
+        handleError(error, 'Não foi possível carregar usuário');
+      }
+    },
+    [userId],
+  );
 }

@@ -11,7 +11,7 @@ const schema = z.object({
   newPassword: z.string(),
 });
 
-export async function changePassword(data: z.infer<typeof schema>) {
+export async function changePasswordAction(data: z.infer<typeof schema>) {
   const { token, newPassword } = await schema.parseAsync(data);
 
   const verificationToken = await prisma.verificationToken.findUnique({

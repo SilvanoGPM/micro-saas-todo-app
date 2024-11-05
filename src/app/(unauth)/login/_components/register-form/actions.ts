@@ -5,8 +5,9 @@ import { randomUUID } from 'crypto';
 import { hash } from 'bcryptjs';
 
 import { env } from '$env';
-import { sendMail } from '$libs/mail';
+import { sendTemplateMail } from '$libs/mail';
 import { prisma } from '$libs/prisma';
+import { ROUTES } from '$libs/auth/routes';
 import { getFirstString } from '$utils/strings';
 
 import { registerSchema, RegisterSchema } from './schema';
@@ -46,14 +47,17 @@ export async function registerWithCredentials(data: RegisterSchema) {
       },
     });
 
-    await sendMail({
+    const actionUrl = `${env.NEXT_PUBLIC_APP_URL}/${ROUTES.auth.verify}?token=${verificationToken.token}`;
+
+    await sendTemplateMail('welcome', {
       to: data.email,
-      subject: 'Bem-vindo ao nosso sistema',
-      html: `Olá ${getFirstString(
-        data.name,
-      )}, Acesse o link para ativar sua conta <a href="${
-        env.NEXT_PUBLIC_APP_URL
-      }/verify?token=${verificationToken.token}">clicando aqui</a>`,
+
+      subject: `Bem-vindo ao sistema, ${getFirstString(data.name)}!`,
+
+      data: {
+        action_url: actionUrl,
+        name: data.name,
+      },
     });
   });
 }

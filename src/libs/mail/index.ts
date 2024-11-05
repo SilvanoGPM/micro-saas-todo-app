@@ -1,11 +1,11 @@
+import { readFile } from 'fs/promises';
+
+import Handlebars from 'handlebars';
 import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
-import React from 'react';
 
 import { env } from '$env';
 
-import mailwindCss from './css';
-import { parseImages } from './images';
 import { TemplateData, TemplateName, templates } from './templates';
 
 export interface SendMailOptions {
@@ -20,45 +20,6 @@ export interface SendTemplateMailOptions<T extends TemplateName> {
   to: string;
   subject: string;
   data: TemplateData<T>;
-}
-
-export function sendMail(options: SendMailOptions) {
-  const isFakeEmail = fakeEmail(options);
-
-  if (isFakeEmail) {
-    return;
-  }
-
-  return nodemailerSendMail(options);
-}
-
-export async function sendTemplateMail<T extends TemplateName>(
-  template: T,
-  { subject, to, data: rawData }: SendTemplateMailOptions<T>,
-) {
-  const data = await templates[template].parseAsync(rawData);
-
-  const ReactDOMServer = (await import('react-dom/server')).default;
-  const Component = (await import(`./templates/${template}`)).default;
-
-  const rawHtml = ReactDOMServer.renderToStaticMarkup(
-    React.createElement(Component, data),
-  );
-
-  const styledHtml = await mailwindCss(rawHtml, {
-    tailwindCss: './src/libs/mail/styles.css',
-  });
-
-  const [html, attachments] = await parseImages(styledHtml, {
-    assetsFolder: './src/libs/mail/assets',
-  });
-
-  return sendMail({
-    to,
-    subject,
-    html,
-    attachments,
-  });
 }
 
 const transporter = nodemailer.createTransport({
@@ -101,4 +62,38 @@ function fakeEmail(options: SendMailOptions) {
   }
 
   return false;
+}
+
+export function sendMail(options: SendMailOptions) {
+  const isFakeEmail = fakeEmail(options);
+
+  if (isFakeEmail) {
+    return;
+  }
+
+  return nodemailerSendMail(options);
+}
+
+export async function sendTemplateMail<T extends TemplateName>(
+  template: T,
+  { subject, to, data: rawData }: SendTemplateMailOptions<T>,
+) {
+  const data = await templates[template].validation.parseAsync(rawData);
+  const defaultValues = templates[template]?.defaultValues || {};
+
+  const sharedData = {
+    base_url: env.NEXT_PUBLIC_APP_URL!,
+    year: new Date().getFullYear(),
+  };
+
+  const templatePath = `./src/libs/mail/templates/${template}.hbs`;
+  const templateContent = await readFile(templatePath, 'utf-8');
+  const templateCompiled = Handlebars.compile(templateContent);
+  const html = templateCompiled({ ...defaultValues, ...data, ...sharedData });
+
+  return sendMail({
+    to,
+    subject,
+    html,
+  });
 }

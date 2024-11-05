@@ -8,18 +8,18 @@ import { pluralize } from '$utils/formatters';
 import { logger } from '$libs/logger';
 
 export async function POST(req: NextRequest) {
-  logger.info('[Daily Notification Cron]: Iniciado');
+  logger.info('[Daily Notification]: Iniciado');
 
   const cronKey = await req.text();
 
   if (cronKey !== env.CRON_KEY) {
-    logger.error('[Daily Notification Cron]: Chave inválida');
+    logger.error('[Daily Notification]: Chave inválida');
 
     return httpResponses.unauthorized();
   }
 
   try {
-    logger.info('[Daily Notification Cron]: Procurando usuários com tarefas');
+    logger.info('[Daily Notification]: Procurando usuários com tarefas');
 
     const users = await prisma.user.findMany({
       select: {
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    logger.info('[Daily Notification Cron]: Enviando notificações');
+    logger.info('[Daily Notification]: Enviando notificações');
 
     await Promise.allSettled(
       users
@@ -52,11 +52,11 @@ export async function POST(req: NextRequest) {
         ),
     );
 
-    logger.info('[Daily Notification Cron]: Finalizado com sucesso');
+    logger.info('[Daily Notification]: Finalizado com sucesso');
 
     return httpResponses.ok({ success: true });
   } catch {
-    logger.error('[Daily Notification Cron]: Erro ao enviar notificações');
+    logger.error('[Daily Notification]: Erro ao enviar notificações');
 
     return httpResponses.badRequest();
   }

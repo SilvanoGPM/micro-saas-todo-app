@@ -8,6 +8,7 @@ export const sendNotificationSchema = z.object({
 
 export const sendMailSchema = z.object({
   userEmail: z.string(),
+  userName: z.string(),
   title: z.string(),
   message: z.string(),
 });

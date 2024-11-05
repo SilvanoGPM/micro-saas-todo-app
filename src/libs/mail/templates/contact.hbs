@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt" style="color-scheme: light dark; supported-color-schemes: light dark;">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="supported-color-schemes" content="light dark" />
+  <title>Contato</title>
+  <style type="text/css" rel="stylesheet" media="all">
+    body, td, th { font-family: "Nunito Sans", Helvetica, Arial, sans-serif; color: #51545E; }
+    .email-wrapper { width: 100%; background-color: #F2F4F6; padding: 0; }
+    .email-content { width: 100%; margin: 0; padding: 0; }
+    .email-masthead { padding: 25px 0; text-align: center; }
+    .email-masthead_name { font-size: 16px; font-weight: bold; color: #A8AAAF; text-shadow: 0 1px 0 white; text-decoration: none; }
+    .email-body_inner { width: 570px; margin: 0 auto; background-color: #FFFFFF; padding: 45px; }
+    h1 { color: #333333; font-size: 22px; font-weight: bold; }
+    p { font-size: 16px; line-height: 1.625; color: #51545E; }
+  </style>
+</head>
+<body>
+  <span class="preheader" style="display: none;">{{title}}</span>
+  <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td align="center">
+        <table class="email-content" width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td class="email-masthead">
+              <a href="{{base_url}}" class="email-masthead_name">LL Coders</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="email-body" width="570" cellpadding="0" cellspacing="0">
+              <table class="email-body_inner" align="center" width="570" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td>
+                    <h1>Olá, {{name}}!</h1>
+                    <p>{{title}}</p>
+                    <p>{{message}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td align="center">
+                          <a href="{{action_url}}" class="button" style="color: #FFF; background-color: #3869D4; display: inline-block; padding: 10px 20px; border-radius: 3px; text-decoration: none;">
+                            Acessar Plataforma
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" class="email-footer">
+              <p style="color: #A8AAAF;">&copy; {{year}} LL Coders. Todos os direitos reservados.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

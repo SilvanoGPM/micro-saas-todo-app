@@ -1,7 +1,6 @@
 import Stripe from 'stripe';
 
-import { ROUTES } from '$libs/auth/routes';
-import { sendMail } from '$libs/mail';
+import { sendTemplateMail } from '$libs/mail';
 
 import { prisma } from '../prisma';
 
@@ -55,7 +54,7 @@ export async function handleProccessCheckoutSuccess(event: {
     where: {
       OR: [{ stripeCustomerId }, { stripeSubscriptionId }],
     },
-    select: { id: true, email: true },
+    select: { id: true, email: true, name: true },
   });
 
   if (!user?.email) {
@@ -63,7 +62,7 @@ export async function handleProccessCheckoutSuccess(event: {
   }
 
   switch (stripePriceId) {
-    case STRIPE_PRODUCTS.notes.priceId:
+    case STRIPE_PRODUCTS.notes.priceId: {
       await prisma.user.update({
         where: { id: user.id },
         data: {
@@ -71,20 +70,20 @@ export async function handleProccessCheckoutSuccess(event: {
         },
       });
 
-      await sendMail({
+      await sendTemplateMail('notes-unlocked', {
         to: user.email,
         subject: 'Suas anotações foram desbloqueadas!',
-        html: `
-          <p>
-            Agora você tem acesso total ao nosso sistema de anotações.
-            Acesse <a href="${process.env.NEXT_PUBLIC_APP_URL}${ROUTES.private.home.path}">nossa home</a>, selecione uma tarefa escolha a opção de anotações para começar.
-          </p>
-        `,
+
+        data: {
+          name: user.name || 'Amigo',
+        },
       });
 
       break;
+    }
 
-    default:
+    default: {
       break;
+    }
   }
 }

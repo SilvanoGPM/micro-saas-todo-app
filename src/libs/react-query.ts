@@ -1,8 +1,4 @@
-import {
-  keepPreviousData,
-  QueryClient,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { keepPreviousData, QueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 
 export const queryClient = new QueryClient({
@@ -23,15 +19,25 @@ export const queryClient = new QueryClient({
   },
 });
 
-export interface UseCacheFnParams<R> {
+export interface CacheFnParams<R> {
   key: unknown[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fn: (...args: any[]) => Promise<R>;
 }
 
-export function useCacheFn<R>({ key, fn }: UseCacheFnParams<R>) {
-  const queryClient = useQueryClient();
+export function cacheFn<R>({ key, fn }: CacheFnParams<R>) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cachedFn = async (...args: any[]) => {
+    return queryClient.fetchQuery({
+      queryKey: [key, ...args],
+      queryFn: () => fn(...args),
+    });
+  };
 
+  return cachedFn;
+}
+
+export function useCacheFn<R>({ key, fn }: CacheFnParams<R>) {
   const [isLoading, setIsLoading] = useState(false);
 
   const cachedFn = useCallback(
@@ -40,15 +46,12 @@ export function useCacheFn<R>({ key, fn }: UseCacheFnParams<R>) {
       try {
         setIsLoading(true);
 
-        return queryClient.fetchQuery({
-          queryKey: [key, ...args],
-          queryFn: () => fn(...args),
-        });
+        return await cacheFn({ key, fn })(...args);
       } finally {
         setIsLoading(false);
       }
     },
-    [fn, key, queryClient],
+    [key, fn],
   );
 
   return { fn: cachedFn, isLoading };

@@ -10,7 +10,7 @@ import { Form } from '$components/ui/form';
 import { handleAction } from '$utils/handle-action';
 import { handleError } from '$utils/handle-error';
 
-import { changePassword } from './actions';
+import { changePasswordAction } from './actions';
 import { changePasswordSchema, ChangePasswordSchema } from './schema';
 
 export interface ChangePasswordFormProps {
@@ -28,7 +28,7 @@ export function ChangePasswordForm({ token }: ChangePasswordFormProps) {
 
   const handleChangePassword = form.handleSubmit(async (data) => {
     try {
-      await handleAction(changePassword, {
+      await handleAction(changePasswordAction, {
         token: token!,
         newPassword: data.password,
       });

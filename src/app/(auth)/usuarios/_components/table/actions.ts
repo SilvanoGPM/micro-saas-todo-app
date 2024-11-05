@@ -3,10 +3,10 @@
 import { z } from 'zod';
 
 import { actionsClient } from '$libs/actions';
-import { prisma } from '$libs/prisma';
 import { ROLES_SEPARATOR, UserRoleEnum } from '$libs/auth/roles';
-import { sendNotifications } from '$libs/notifications/send-notification';
 import { sendTemplateMail } from '$libs/mail';
+import { sendNotifications } from '$libs/notifications/send-notification';
+import { prisma } from '$libs/prisma';
 
 import { sendMailSchema, sendNotificationSchema } from './schemas';
 
@@ -85,6 +85,7 @@ export const sendMailAction = actionsClient.createAction({
       to: data.userEmail,
       subject: data.title,
       data: {
+        name: data.userName,
         title: data.title,
         message: data.message,
       },
