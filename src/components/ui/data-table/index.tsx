@@ -248,7 +248,7 @@ export function DataTable<TData extends object, TValue>({
         </div>
       </div>
 
-      <div className="rounded-md border">
+      <div className={cn('rounded-md border')}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -274,6 +274,7 @@ export function DataTable<TData extends object, TValue>({
               </TableRow>
             ))}
           </TableHeader>
+
           <TableBody>
             {!isLoading ? (
               <>
@@ -296,7 +297,6 @@ export function DataTable<TData extends object, TValue>({
                         {row.getVisibleCells().map((cell) => (
                           <TableCell
                             key={cell.id}
-                            className="whitespace-nowrap"
                             style={{
                               ...getCommonPinningStyles({
                                 column: cell.column,

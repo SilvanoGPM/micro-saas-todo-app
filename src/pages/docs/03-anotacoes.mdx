@@ -1,0 +1,15 @@
+import { env } from '$env';
+import { ROUTES } from '$libs/auth/routes';
+
+export const homePath = `${env.NEXT_PUBLIC_APP_URL}${ROUTES.private.home.path}`;
+
+# Anotações
+
+## Adicionando anotação para uma tarefa
+
+Para criar uma nova tarefa:
+1. Acesse a página principal em <b><a target="_blank" href={homePath}>{homePath}</a></b>
+2. Em uma tarefa, clique no botão de ações e selecione a opção de anotações
+3. Você será redirecionado para a página de anotações da tarefa
+
+Simples assim, agora você pode adicionar suas anotações à tarefa selecionada.

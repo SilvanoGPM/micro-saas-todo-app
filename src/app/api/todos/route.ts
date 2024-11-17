@@ -5,7 +5,6 @@ import { apiClient } from '$libs/api';
 import { isAdmin } from '$libs/auth/roles';
 import { byFieldsContaining, getPrismaPagination, prisma } from '$libs/prisma';
 import { STRIPE_PLANS } from '$libs/stripe/products';
-import { logger } from '$libs/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,8 +12,6 @@ export const GET = apiClient.createGetRoute({
   id: HTTP_KEYS.todo.list,
 
   async handler({ searchParams, user, httpResponses }) {
-    logger.info('[GET /todos]: Iniciado');
-
     const userId = isAdmin(user)
       ? searchParams.get('userId') || user.id
       : user.id;

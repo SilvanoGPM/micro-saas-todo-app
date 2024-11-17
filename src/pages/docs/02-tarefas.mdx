@@ -1,0 +1,40 @@
+import { env } from '$env';
+import { ROUTES } from '$libs/auth/routes';
+
+export const homePath = `${env.NEXT_PUBLIC_APP_URL}${ROUTES.private.home.path}`;
+
+# Tarefas
+
+## Visualizando Tarefas
+
+Para visualizar as tarefas disponíveis, acesse a página principal em <b><a target="_blank" href={homePath}>{homePath}</a></b>
+
+### Filtrando/pesquisando Tarefas
+
+Você pode filtrar/pesquisar tarefas por: Título, Data de Criação, Data de Atualização e Status.
+
+### Como baixar um arquivo CSV com as tarefas?
+
+Basta selecionar as tarefas que deseja exportar e clicar no botão de *Exportar* que vai aparecer ao lado do botão de *Adicionar Tarefa*.
+
+## Criando uma Nova Tarefa
+
+Para criar uma nova tarefa:
+1. Acesse a página principal em <b><a target="_blank" href={homePath}>{homePath}</a></b>
+2. Clique no botão de adicionar tarefa
+3. Preencha o título da tarefa
+4. Clique em salvar
+
+## Editando uma Tarefa
+
+Para editar uma tarefa existente:
+1. Clique na tarefa que deseja modificar
+2. Faça as alterações necessárias
+3. Salve as modificações
+
+## Excluindo uma Tarefa
+
+Para excluir uma tarefa:
+1. Clique na tarefa que deseja excluir
+2. Clique no botão de excluir
+3. Confirme a exclusão
