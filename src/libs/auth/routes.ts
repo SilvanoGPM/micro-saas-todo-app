@@ -5,6 +5,7 @@ export const ROUTES = {
 
   auth: {
     login: '/login',
+    signUp: '/login?tab=register',
     verify: '/verify',
     reset: '/reset',
   },

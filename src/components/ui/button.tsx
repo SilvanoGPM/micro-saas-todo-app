@@ -13,7 +13,7 @@ const variant = {
     'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
 
   coloredOutline:
-    'border border-primary text-primary transition-all duration-200 hover:bg-primary hover:text-white',
+    'border border-primary text-primary transition-all duration-200 hover:bg-primary hover:text-primary-foreground',
 
   secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
   ghost: 'hover:bg-accent hover:text-accent-foreground',

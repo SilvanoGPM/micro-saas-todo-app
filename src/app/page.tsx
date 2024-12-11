@@ -1,17 +1,37 @@
-import Link from 'next/link';
+import { auth } from '$libs/auth';
 
-import { ROUTES } from '$libs/auth/routes';
-import { Button } from '$components/ui/button';
-import { Logo } from '$components/logo';
+import { LandingPageCTA1 } from './_components/cta1';
+import { LandingPageFeatures } from './_components/features';
+import { LandingPageFooter } from './_components/footer';
+import { LandingPageHeader } from './_components/header';
+import { LandingPageHero } from './_components/hero';
+import { LandingPageNotes } from './_components/notes';
+import { LandingPageParticles } from './_components/particles';
+import { LandingPagePricing } from './_components/princing';
+import { LandingPageSaasImage } from './_components/saas-image';
 
-export default function HomePage() {
+export default async function HomeLandingPage() {
+  const session = await auth();
+
   return (
-    <main className="h-dvh w-full flex flex-col gap-4 items-center justify-center">
-      <Logo />
+    <div className="relative overflow-hidden">
+      <LandingPageHeader user={session?.user} />
 
-      <Button>
-        <Link href={ROUTES.private.home.path}>Ir para Dashboard</Link>
-      </Button>
-    </main>
+      <main className="w-full h-full py-14 flex flex-col gap-4 items-center justify-center">
+        <LandingPageHero />
+        <LandingPageSaasImage />
+
+        <div className="w-full flex flex-col gap-8 mt-16">
+          <LandingPageFeatures />
+          <LandingPageCTA1 />
+          <LandingPagePricing />
+          <LandingPageNotes />
+        </div>
+      </main>
+
+      <LandingPageFooter />
+
+      <LandingPageParticles />
+    </div>
   );
 }
